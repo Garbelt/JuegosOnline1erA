@@ -5,48 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo de Juegos - Canciones Patrias</title>
   <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
 .container {
   max-width: 1000px;
   width: 95%;
   padding: 20px;
   background-color: white;
   border-radius: 10px;
-  text-align: center;
   box-sizing: border-box;
+  margin: 0 auto;
+  text-align: center;
 }
 
-/* Contenedor scrollable para la tabla */
-.table-container {
-  overflow-x: auto;
-  width: 100%;
+.table-wrapper {
+  overflow-x: auto;   /* Scroll horizontal solo aquí */
+  max-width: 100%;
   margin-bottom: 20px;
-}
-
-h2 {
-  margin-bottom: 20px;
-  font-size: 22px;
-  color: #004080;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: auto; /* que no fije columnas */
+  table-layout: auto;
+  min-width: 600px;  /* Opcional: para que no colapse demasiado */
 }
 
 td {
   padding: 10px;
-  max-width: 150px; /* limita ancho máximo para no estirar */
   word-wrap: break-word;
   white-space: normal;
 }
@@ -54,41 +38,39 @@ td {
 img {
   max-width: 100%;
   height: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-a {
   display: block;
-  margin-top: 8px;
-  text-decoration: none;
-  color: #2980b9;
-  font-weight: bold;
-  word-wrap: break-word;
+  margin: 0 auto;
+  border-radius: 8px;
 }
 
 button {
-  margin: 5px;
+  width: 40%;
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
-  background-color: #2980b9;
-  color: white;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  margin: 5px 10px;
 }
 
-button:hover {
+button#backButton {
+  background-color: #2980b9;
+  color: white;
+}
+
+button#backButton:hover {
   background-color: #1c598a;
 }
 
-/* Responsive para pantallas pequeñas */
+/* Responsive para móviles horizontales y verticales */
 @media (max-width: 768px) {
-  td {
-    max-width: 100px;
+  table {
+    min-width: 500px; /* menos para pantallas pequeñas */
   }
-  img {
-    max-width: 100%;
+
+  button {
+    width: 90%;
+    margin: 5px 0;
   }
 }
 
