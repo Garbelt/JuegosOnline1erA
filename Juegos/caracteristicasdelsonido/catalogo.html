@@ -5,52 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo de Juegos - Canciones Patrias</title>
   <style>
+/* Contenedor general */
 .container {
-  max-width: 1000px;
+  max-width: 1000px;   /* límite máximo */
   width: 95%;
+  margin: 20px auto;
+  background: white;
   padding: 20px;
-  background-color: white;
-  border-radius: 10px;
   box-sizing: border-box;
-  margin: 0 auto;
   text-align: center;
+  border-radius: 10px;
 }
 
+/* Contenedor de la tabla con scroll horizontal */
 .table-wrapper {
-  overflow-x: auto;   /* Scroll horizontal solo aquí */
-  max-width: 100%;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* suaviza scroll en iOS */
   margin-bottom: 20px;
 }
 
+/* La tabla ocupará el 100% del contenedor, pero no más */
 table {
   width: 100%;
   border-collapse: collapse;
+  /* table-layout: auto para que se adapte */
   table-layout: auto;
-  min-width: 600px;  /* Opcional: para que no colapse demasiado */
+  min-width: 600px; /* para que no se achique demasiado en pantallas pequeñas */
 }
 
+/* Celdas */
 td {
-  padding: 10px;
-  word-wrap: break-word;
+  padding: 8px;
   white-space: normal;
+  word-wrap: break-word;
+  text-align: center;
 }
 
-img {
-  max-width: 100%;
+/* Imágenes en celdas */
+td img {
+  max-width: 100%;  /* nunca más anchas que su celda */
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 8px;
 }
 
+/* Botones */
 button {
   width: 40%;
   padding: 10px 20px;
+  margin: 5px 10px;
   border-radius: 5px;
   border: none;
   cursor: pointer;
   font-size: 16px;
-  margin: 5px 10px;
+  box-sizing: border-box;
 }
 
 button#backButton {
@@ -62,10 +73,18 @@ button#backButton:hover {
   background-color: #1c598a;
 }
 
-/* Responsive para móviles horizontales y verticales */
+button#homeButton {
+  background-color: #ccc;
+}
+
+button#homeButton:hover {
+  background-color: #aaa;
+}
+
+/* Responsive para móviles */
 @media (max-width: 768px) {
   table {
-    min-width: 500px; /* menos para pantallas pequeñas */
+    min-width: 400px;  /* más pequeño para móviles */
   }
 
   button {
@@ -73,6 +92,7 @@ button#backButton:hover {
     margin: 5px 0;
   }
 }
+
 
   </style>
 <head>
@@ -82,7 +102,7 @@ button#backButton:hover {
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+   <div class="container">
   <h2>Catálogo de Juegos - Características del Sonido</h2>
 
   <div class="table-wrapper">
@@ -107,6 +127,7 @@ button#backButton:hover {
   <button id="backButton" onclick="goBackToGames()">Volver al Menú de Juegos</button>
   <button id="homeButton" onclick="goToHome()">Volver al Inicio</button>
 </div>
+
 
 
     <script src="script.js"></script>
