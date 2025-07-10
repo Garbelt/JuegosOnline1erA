@@ -37,20 +37,55 @@ h2 {
   font-size: 22px;
   color: #004080;
 }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1000px;
+  width: 95%;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Contenedor scrollable para la tabla */
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #004080;
+}
 
 table {
   width: 100%;
-  min-width: 600px;   /* 👈 evita que se achique demasiado */
   border-collapse: collapse;
+  table-layout: auto; /* que no fije columnas */
 }
 
 td {
   padding: 10px;
+  max-width: 150px; /* limita ancho máximo para no estirar */
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 img {
-  width: 100%;
-  max-width: 150px;
+  max-width: 100%;
+  height: auto;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -61,6 +96,7 @@ a {
   text-decoration: none;
   color: #2980b9;
   font-weight: bold;
+  word-wrap: break-word;
 }
 
 button {
@@ -78,16 +114,16 @@ button:hover {
   background-color: #1c598a;
 }
 
-/* 📱 Responsive */
+/* Responsive para pantallas pequeñas */
 @media (max-width: 768px) {
+  td {
+    max-width: 100px;
+  }
   img {
     max-width: 100%;
   }
-
-  td {
-    text-align: center;
-  }
 }
+
 
 
   </style>
