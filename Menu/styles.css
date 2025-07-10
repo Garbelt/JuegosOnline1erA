@@ -1,0 +1,66 @@
+﻿/* Estilos para el menú de selección de temas */
+
+
+.container {
+    max-width: 600px; /* Aumentar el ancho máximo del contenedor */
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center; /* Centrar el contenido */
+    
+}
+
+#mainMenu, #subMenu {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.themeButton, .subThemeButton {
+    width: calc(100% - 10px); /* Botones que cubren todo el ancho del contenedor con un pequeño margen */
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #2980b9; /* Azul oscuro */
+    color: #fff;
+}
+
+.themeButton:hover, .subThemeButton:hover {
+    background-color: #3498db; /* Azul claro */
+}
+
+#backButton, #exitButton {
+    width: calc(50% - 5px);
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+#backtoareaButton, #exitButton {
+    width: calc(50% - 5px);
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+#exitButton {
+    background-color: #e74c3c; /* Rojo */
+    color: #fff;
+}
+
+#exitButton:hover {
+    background-color: #c0392b; /* Rojo oscuro */
+}
+
+
+
