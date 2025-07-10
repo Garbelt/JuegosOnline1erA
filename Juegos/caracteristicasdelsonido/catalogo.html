@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Juegos - Canciones Patrias</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Catálogo de Juegos - Características del Sonido</h2>
+
+        <table>
+            <tr>
+                <td><img src="Imagenes/juego01.jpg" alt="Juego 01"></td>
+                <td><img src="Imagenes/juego02.jpg" alt="Juego 02"></td>
+                <td><img src="Imagenes/juego03.jpg" alt="Juego 03"></td>
+                <td><img src="Imagenes/juego04.jpg" alt="Juego 04"></td>
+                <td><img src="Imagenes/juego05.jpg" alt="Juego 05"></td>
+            </tr>
+            <tr>
+                <td><a href="Juego 01/gral/gral.html" onclick="setRutina('Juego 01')">Juego 01</a></td>
+                <td><a href="Juego 02/gral/gral.html" onclick="setRutina('Juego 02')">Juego 02</a></td>
+                <td><a href="Juego 03/gral/gral.html" onclick="setRutina('Juego 03')">Juego 03</a></td>
+                <td><a href="Juego 04/gral/gral.html" onclick="setRutina('Juego 04')">Juego 04</a></td>
+                <td><a href="Juego 05/gral/gral.html" onclick="setRutina('Juego 05')">Juego 05</a></td>
+            </tr>
+        </table>
+
+        <button id="backButton" onclick="goBackToGames()" style="background-color: #2980b9; width: 40%; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Menú de Juegos</button>
+
+        <button id="homeButton" onclick="goToHome()" style="width: 40%; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Inicio</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function setRutina(gameName) {
+            const codigo = "01cancionesDTA";
+            const rutina = `${codigo}_${gameName}`;
+            localStorage.setItem("rutina", rutina);
+            localStorage.setItem("acumulado", 0);
+            console.log(`Se ha almacenado la rutina: ${rutina}`);
+            console.log(`Se ha inicializado el acumulado: 0`);
+        }
+
+        function goBackToGames() {
+            window.location.href = '../../Menu/Juegos.html';
+        }
+
+        function goToHome() {
+            window.location.href = '../../index.html';
+        }
+    </script>
+</body>
+</html>
