@@ -1,134 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo de Juegos - Canciones Patrias</title>
-  <style>
-/* Contenedor general */
-.container {
-  max-width: 1000px;   /* límite máximo */
-  width: 95%;
-  margin: 20px auto;
-  background: white;
-  padding: 20px;
-  box-sizing: border-box;
-  text-align: center;
-  border-radius: 10px;
-}
-
-/* Contenedor de la tabla con scroll horizontal */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* suaviza scroll en iOS */
-  margin-bottom: 20px;
-}
-
-/* La tabla ocupará el 100% del contenedor, pero no más */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  /* table-layout: auto para que se adapte */
-  table-layout: auto;
-  min-width: 600px; /* para que no se achique demasiado en pantallas pequeñas */
-}
-
-/* Celdas */
-td {
-  padding: 8px;
-  white-space: normal;
-  word-wrap: break-word;
-  text-align: center;
-}
-
-/* Imágenes en celdas */
-td img {
-  max-width: 100%;  /* nunca más anchas que su celda */
-  height: auto;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 8px;
-}
-
-/* Botones */
-button {
-  width: 40%;
-  padding: 10px 20px;
-  margin: 5px 10px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-button#backButton {
-  background-color: #2980b9;
-  color: white;
-}
-
-button#backButton:hover {
-  background-color: #1c598a;
-}
-
-button#homeButton {
-  background-color: #ccc;
-}
-
-button#homeButton:hover {
-  background-color: #aaa;
-}
-
-/* Responsive para móviles */
-@media (max-width: 768px) {
-  table {
-    min-width: 400px;  /* más pequeño para móviles */
-  }
-
-  button {
-    width: 90%;
-    margin: 5px 0;
-  }
-}
-
-
-  </style>
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Juegos - Canciones Patrias</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-   <div class="container">
-  <h2>Catálogo de Juegos - Características del Sonido</h2>
+    <div class="container">
+        <h2>Catálogo de Juegos - Características del Sonido</h2>
 
-  <div class="table-wrapper">
-    <table>
-      <tr>
-        <td><img src="Imagenes/juego01.jpg" alt="Juego 01"></td>
-        <td><img src="Imagenes/juego02.jpg" alt="Juego 02"></td>
-        <td><img src="Imagenes/juego03.jpg" alt="Juego 03"></td>
-        <td><img src="Imagenes/juego04.jpg" alt="Juego 04"></td>
-        <td><img src="Imagenes/juego05.jpg" alt="Juego 05"></td>
-      </tr>
-      <tr>
-        <td><a href="Juego 01/gral/gral.html" onclick="setRutina('Juego 01')">Juego 01</a></td>
-        <td><a href="Juego 02/gral/gral.html" onclick="setRutina('Juego 02')">Juego 02</a></td>
-        <td><a href="Juego 03/gral/gral.html" onclick="setRutina('Juego 03')">Juego 03</a></td>
-        <td><a href="Juego 04/gral/gral.html" onclick="setRutina('Juego 04')">Juego 04</a></td>
-        <td><a href="Juego 05/gral/gral.html" onclick="setRutina('Juego 05')">Juego 05</a></td>
-      </tr>
-    </table>
-  </div>
+        <table>
+            <tr>
+                <td><img src="Imagenes/juego01.jpg" alt="Juego 01"></td>
+                <td><img src="Imagenes/juego02.jpg" alt="Juego 02"></td>
+                <td><img src="Imagenes/juego03.jpg" alt="Juego 03"></td>
+                <td><img src="Imagenes/juego04.jpg" alt="Juego 04"></td>
+                <td><img src="Imagenes/juego05.jpg" alt="Juego 05"></td>
+            </tr>
+            <tr>
+                <td><a href="Juego 01/gral/gral.html" onclick="setRutina('Juego 01')">Juego 01</a></td>
+                <td><a href="Juego 02/gral/gral.html" onclick="setRutina('Juego 02')">Juego 02</a></td>
+                <td><a href="Juego 03/gral/gral.html" onclick="setRutina('Juego 03')">Juego 03</a></td>
+                <td><a href="Juego 04/gral/gral.html" onclick="setRutina('Juego 04')">Juego 04</a></td>
+                <td><a href="Juego 05/gral/gral.html" onclick="setRutina('Juego 05')">Juego 05</a></td>
+            </tr>
+        </table>
 
-  <button id="backButton" onclick="goBackToGames()">Volver al Menú de Juegos</button>
-  <button id="homeButton" onclick="goToHome()">Volver al Inicio</button>
-</div>
+        <button id="backButton" onclick="goBackToGames()" style="background-color: #2980b9; width: 40%; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Menú de Juegos</button>
 
-
+        <button id="homeButton" onclick="goToHome()" style="width: 40%; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Inicio</button>
+    </div>
 
     <script src="script.js"></script>
     <script>
@@ -148,15 +50,6 @@ button#homeButton:hover {
         function goToHome() {
             window.location.href = '../../index.html';
         }
-
-    
-  window.addEventListener("orientationchange", () => {
-    setTimeout(() => {
-      window.location.reload();
-    }, 300);
-  });
-
-
     </script>
 </body>
 </html>
