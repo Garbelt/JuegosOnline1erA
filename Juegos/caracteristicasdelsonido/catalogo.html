@@ -140,6 +140,15 @@ button:hover {
         function goToHome() {
             window.location.href = '../../index.html';
         }
+
+    
+  window.addEventListener("orientationchange", () => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 300);
+  });
+
+
     </script>
 </body>
 </html>
