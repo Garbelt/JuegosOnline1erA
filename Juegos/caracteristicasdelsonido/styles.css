@@ -22,22 +22,27 @@ body, html {
 
 /* Envuelve la tabla para controlarla */
 .table-wrapper {
-    overflow-x: auto;   /* Scroll horizontal si es necesario */
-    width: 100%;
+    border: 2px solid #999;       /* Borde exterior de todo */
+    padding: 10px;                /* Espacio interior */
+    border-radius: 5px;
+    background-color: white;
+    overflow-x: auto;
 }
 
-/* La tabla no puede ser más ancha que el contenedor */
 .table-wrapper table {
     width: 100%;
-    border-collapse: collapse;  /* Elimina espacios entre bordes */
-    border: 2px solid #999;     /* Borde exterior de la tabla */
+    border-collapse: collapse;    /* Quitar doble borde */
 }
 
 .table-wrapper td {
-    border: 1px solid #999;      /* Bordes entre celdas */
-    padding: 8px;
-    width: 20%;
+    border-right: 1px solid #999; /* Borde vertical entre columnas */
+    padding: 10px;
     text-align: center;
+}
+
+/* Eliminar el borde derecho en la última celda */
+.table-wrapper td:last-child {
+    border-right: none;
 }
 
 .table-wrapper img {
