@@ -17,61 +17,59 @@ body, html {
     max-width: 850px;
     background: white;
     box-sizing: border-box;
-    margin: 0; /* Elimina margin-top */
+    overflow-x: auto;  /* Permite scroll horizontal si algo se sale */
 }
 
-
-
-/* En pantallas más pequeñas que 450px, el container toma casi todo el ancho */
-@media (max-width: 450px) {
-    .container {
-        width: 95%;      /* casi todo el ancho disponible */
-        max-width: 400px; /* para no crecer más allá de 400px */
-    }
-}
-
+/* Tabla flexible */
 table {
-    width: 100%; /* Ocupa todo el ancho disponible */
-    table-layout: fixed; /* Distribución equitativa de columnas */
+    width: 100%; /* Ocupa todo el ancho */
+    border-collapse: collapse;
 }
 
+/* Filas y celdas */
 table td {
-    width: 20%; /* 5 columnas => 100% ÷ 5 */
     padding: 5px;
-    border: none; /* Si prefieres sin bordes */
+    border: none;
+    width: 20%;  /* Fuerza 5 columnas iguales */
 }
 
+/* Imágenes adaptables */
 table img {
-    width: 80%; /* Más flexible para pantallas pequeñas */
-    max-width: 100px; /* Límite para pantallas grandes */
+    width: 100%;   /* 100% de la celda */
+    max-width: 80px;  /* Limita en pantallas grandes */
     height: auto;
 }
 
-
+/* Botones */
 button {
     width: 40%;
-    max-width: 200px; /* Limita el ancho máximo */
-    margin-top: 20px;
+    max-width: 200px;
+    margin-top: 15px;
     padding: 10px 20px;
     font-size: 16px;
     border: none;
     cursor: pointer;
-    margin-top: 20px;
     border-radius: 5px;
 }
 
-@media (max-width: 450px) {
+/* Botones para móviles */
+@media (max-width: 500px) {
     button {
-        width: 80%; /* Que ocupen más espacio en móviles */
+        width: 90%; /* Que ocupen casi todo el ancho en celulares */
+    }
+
+    table img {
+        max-width: 60px; /* Imágenes más pequeñas en móvil */
+    }
+
+    table td {
+        padding: 3px;
     }
 }
 
-#exitButton {
-    background-color: #e74c3c; /* Rojo */
-    color: #fff;
-}
-
-#GRALButton {
-    background-color: #3344db; /* Azul mas oscuro */
-    color: #fff;
+/* Para pantallas muy pequeñas — tabla con scroll */
+@media (max-width: 400px) {
+    .container {
+        overflow-x: auto;  /* Si todo se vuelve demasiado ancho */
+    }
 }
