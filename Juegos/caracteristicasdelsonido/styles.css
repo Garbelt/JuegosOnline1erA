@@ -1,92 +1,93 @@
 body, html {
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
 }
 
 .container {
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    padding: 20px;
-    text-align: center;
-    width: 95%;
-    max-width: 850px;
-    background: white;
-    box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  width: 95%;
+  max-width: 850px;
+  background: white;
+  box-sizing: border-box;
+  min-height: 300px;
 }
 
-/* Envuelve la tabla para controlarla */
 .table-wrapper {
-    border: 2px solid #555;       /* Borde exterior envolvente */
-    padding: 10px;
-    border-radius: 5px;
-    background-color: white;
-    overflow-x: auto;
+  display: block;
+  border: 2px solid #555;        /* Borde exterior visible */
+  padding: 10px;
+  border-radius: 5px;
+  background-color: white;
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .table-wrapper table {
-    width: 100%;
-    border-collapse: collapse;    /* Unifica los bordes */
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .table-wrapper td {
-    border: 1px solid #555;       /* Borde alrededor de cada imagen + enlace */
-    padding: 10px;
-    text-align: center;
-    vertical-align: middle;
+  border: 1px solid #555;         /* Borde interior entre celdas */
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .table-wrapper img {
-    width: 100%;
-    max-width: 80px;
-    height: auto;
+  width: 100%;
+  max-width: 80px;
+  height: auto;
 }
 
 .table-wrapper a {
-    display: block;
-    margin-top: 8px;
+  display: block;
+  margin-top: 8px;
 }
-
 
 /* Botones */
 button {
-    width: 40%;
-    max-width: 200px;
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+  width: 40%;
+  max-width: 200px;
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-/* Estilo individual de los botones */
 #backButton {
-    background-color: #2980b9;
-    color: white;
+  background-color: #2980b9;
+  color: white;
 }
 
 #homeButton {
-    background-color: #ddd;
+  background-color: #ddd;
 }
 
-/* Responsive: móviles */
+/* Responsive móviles */
 @media (max-width: 600px) {
-    button {
-        width: 90%;
-    }
+  button {
+    width: 90%;
+  }
 
-    table td {
-        width: auto;   /* Que no se rompa por ancho fijo */
-        padding: 3px;
-    }
+  .table-wrapper td {
+    padding: 5px;
+  }
 
-    table img {
-        max-width: 60px;
-    }
+  .table-wrapper img {
+    max-width: 60px;
+  }
 }
