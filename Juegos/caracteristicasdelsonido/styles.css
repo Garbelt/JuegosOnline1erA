@@ -33,26 +33,26 @@
 }
 
 table {
-    max-width: 700px;
-    width: 95%;
-    border-collapse: collapse; /* Colapsar bordes de celda */
-    margin-top: 20px; /* Añadir margen superior */
+    width: 100%; /* Ocupa todo el ancho disponible */
+    table-layout: fixed; /* Distribución equitativa de columnas */
 }
 
 table td {
-    padding: 10px;
-    border: 1px solid #ccc; /* Añadir borde a las celdas */
+    width: 20%; /* 5 columnas => 100% ÷ 5 */
+    padding: 5px;
+    border: none; /* Si prefieres sin bordes */
 }
 
 table img {
-    width: 100px; /* Ancho fijo para las imágenes */
+    width: 80%; /* Más flexible para pantallas pequeñas */
+    max-width: 100px; /* Límite para pantallas grandes */
     height: auto;
-    display: block;
-    margin: 0 auto 10px; /* Centrar las imágenes */
 }
 
+
 button {
-    width: calc(30% - 10px);
+    width: 40%;
+    max-width: 200px; /* Limita el ancho máximo */
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 16px;
@@ -62,13 +62,18 @@ button {
     border-radius: 5px;
 }
 
+@media (max-width: 450px) {
+    button {
+        width: 80%; /* Que ocupen más espacio en móviles */
+    }
+}
+
 #exitButton {
     background-color: #e74c3c; /* Rojo */
     color: #fff;
 }
 
 #GRALButton {
-    width:50%;
     background-color: #3344db; /* Azul mas oscuro */
     color: #fff;
 }
