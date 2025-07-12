@@ -22,8 +22,8 @@ body, html {
 
 /* Envuelve la tabla para controlarla */
 .table-wrapper {
-    border: 2px solid #999;       /* Borde exterior de todo */
-    padding: 10px;                /* Espacio interior */
+    border: 2px solid #555;       /* Borde exterior envolvente */
+    padding: 10px;
     border-radius: 5px;
     background-color: white;
     overflow-x: auto;
@@ -31,24 +31,25 @@ body, html {
 
 .table-wrapper table {
     width: 100%;
-    border-collapse: collapse;    /* Quitar doble borde */
+    border-collapse: collapse;    /* Unifica los bordes */
 }
 
 .table-wrapper td {
-    border-right: 1px solid #999; /* Borde vertical entre columnas */
+    border: 1px solid #555;       /* Borde alrededor de cada imagen + enlace */
     padding: 10px;
     text-align: center;
-}
-
-/* Eliminar el borde derecho en la última celda */
-.table-wrapper td:last-child {
-    border-right: none;
+    vertical-align: middle;
 }
 
 .table-wrapper img {
     width: 100%;
     max-width: 80px;
     height: auto;
+}
+
+.table-wrapper a {
+    display: block;
+    margin-top: 8px;
 }
 
 
