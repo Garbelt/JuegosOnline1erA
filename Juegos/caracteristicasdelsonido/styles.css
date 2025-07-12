@@ -27,24 +27,25 @@ body, html {
 }
 
 /* La tabla no puede ser más ancha que el contenedor */
-table {
+.table-wrapper table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse;  /* Elimina espacios entre bordes */
+    border: 2px solid #999;     /* Borde exterior de la tabla */
 }
 
-/* Celdas */
-table td {
-    width: 20%;   /* 5 columnas iguales */
-    padding: 5px;
-    border: none;
+.table-wrapper td {
+    border: 1px solid #999;      /* Bordes entre celdas */
+    padding: 8px;
+    width: 20%;
+    text-align: center;
 }
 
-/* Imágenes adaptables */
-table img {
+.table-wrapper img {
     width: 100%;
-    max-width: 80px;  /* Máximo en pantallas grandes */
+    max-width: 80px;
     height: auto;
 }
+
 
 /* Botones */
 button {
