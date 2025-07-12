@@ -68,17 +68,6 @@ button {
   border-radius: 5px;
 }
 
-#backButton {
-  width:50%;
-  background-color: #2980b9;
-  color: white;
-}
-
-#homeButton {
-  width:50%;
-  background-color: #ddd;
-}
-
 /* Responsive móviles */
 @media (max-width: 600px) {
   button {
