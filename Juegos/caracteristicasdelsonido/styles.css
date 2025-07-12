@@ -1,26 +1,24 @@
-﻿body, html {
+body, html {
     min-height: 100vh;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-
     display: flex;
-    justify-content: center;     /* Centrado horizontal */
-    align-items: center;         /* Centrado vertical */
+    justify-content: center;
+    align-items: center;
 }
 
-
-    .container {
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      padding: 20px;
-      text-align: center; /* Centrar el contenido */
-      width: 100%;
-      max-width: 850px;
-      margin-top: 20px;
-      background: white;
-      box-sizing: border-box;
-    }
+.container {
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    width: 95%;
+    max-width: 850px;
+    background: white;
+    box-sizing: border-box;
+    margin: 0; /* Elimina margin-top */
+}
 
 
 
