@@ -6,6 +6,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #f0f0f0;
 }
 
 .container {
@@ -17,26 +18,31 @@ body, html {
     max-width: 850px;
     background: white;
     box-sizing: border-box;
-    overflow-x: auto;  /* Permite scroll horizontal si algo se sale */
 }
 
-/* Tabla flexible */
+/* Envuelve la tabla para controlarla */
+.table-wrapper {
+    overflow-x: auto;   /* Scroll horizontal si es necesario */
+    width: 100%;
+}
+
+/* La tabla no puede ser más ancha que el contenedor */
 table {
-    width: 100%; /* Ocupa todo el ancho */
+    width: 100%;
     border-collapse: collapse;
 }
 
-/* Filas y celdas */
+/* Celdas */
 table td {
+    width: 20%;   /* 5 columnas iguales */
     padding: 5px;
     border: none;
-    width: 20%;  /* Fuerza 5 columnas iguales */
 }
 
 /* Imágenes adaptables */
 table img {
-    width: 100%;   /* 100% de la celda */
-    max-width: 80px;  /* Limita en pantallas grandes */
+    width: 100%;
+    max-width: 80px;  /* Máximo en pantallas grandes */
     height: auto;
 }
 
@@ -52,24 +58,28 @@ button {
     border-radius: 5px;
 }
 
-/* Botones para móviles */
-@media (max-width: 500px) {
-    button {
-        width: 90%; /* Que ocupen casi todo el ancho en celulares */
-    }
+/* Estilo individual de los botones */
+#backButton {
+    background-color: #2980b9;
+    color: white;
+}
 
-    table img {
-        max-width: 60px; /* Imágenes más pequeñas en móvil */
+#homeButton {
+    background-color: #ddd;
+}
+
+/* Responsive: móviles */
+@media (max-width: 600px) {
+    button {
+        width: 90%;
     }
 
     table td {
+        width: auto;   /* Que no se rompa por ancho fijo */
         padding: 3px;
     }
-}
 
-/* Para pantallas muy pequeñas — tabla con scroll */
-@media (max-width: 400px) {
-    .container {
-        overflow-x: auto;  /* Si todo se vuelve demasiado ancho */
+    table img {
+        max-width: 60px;
     }
 }
