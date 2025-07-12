@@ -1,10 +1,113 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Juegos - Canciones Patrias</title>
     <link rel="stylesheet" href="styles.css">
+
+<style>
+body, html {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+}
+
+.container {
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  width: 95%;
+  max-width: 850px;
+  background: white;
+  box-sizing: border-box;
+  min-height: 300px;
+}
+
+.table-wrapper {
+  display: block;
+  border: 2px solid #555;        /* Borde exterior visible */
+  padding: 10px;
+  border-radius: 5px;
+  background-color: white;
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table-wrapper td {
+  border: 1px solid #555;         /* Borde interior entre celdas */
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-wrapper img {
+  width: 100%;
+  max-width: 80px;
+  height: auto;
+}
+
+.table-wrapper a {
+  display: block;
+  margin-top: 8px;
+}
+
+/* Botones */
+#backButton, #homeButton {
+  width: 75%;
+  max-width: 425px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: block;
+  margin: 15px auto;
+}
+
+#backButton {
+  background-color: #2980b9;
+  color: white;
+}
+
+#backButton:hover {
+  background-color: #1c5ea8;
+}
+
+#homeButton {
+  background-color: #ddd;
+  color: black;
+}
+
+#homeButton:hover {
+  background-color: #bbb;
+}
+
+/* Responsive SOLO para tabla e imágenes */
+@media (max-width: 600px) {
+  .table-wrapper td {
+    padding: 5px;
+  }
+
+  .table-wrapper img {
+    max-width: 60px;
+  }
+}
+</style>
 </head>
 <body>
 <div class="container">
@@ -38,9 +141,9 @@
 </div>
 
 
-    <button id="backButton" onclick="goBackToGames()" style="background-color: #2980b9; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Menú de Juegos</button>
-<br>
-    <button id="homeButton" onclick="goToHome()" style=color: black; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Inicio</button>
+<button id="backButton" onclick="goBackToGames()">Volver al Menú de Juegos</button>
+<button id="homeButton" onclick="goToHome()">Volver al Inicio</button>
+
 </div>
 
 
