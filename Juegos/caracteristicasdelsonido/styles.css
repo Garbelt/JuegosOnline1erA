@@ -68,13 +68,3 @@ button {
   border-radius: 5px;
 }
 
-/* Responsive SOLO para tabla e imágenes */
-@media (max-width: 600px) {
-  .table-wrapper td {
-    padding: 5px;
-  }
-
-  .table-wrapper img {
-    max-width: 60px;
-  }
-}
