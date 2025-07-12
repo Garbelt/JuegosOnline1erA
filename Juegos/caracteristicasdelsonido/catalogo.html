@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Catálogo de Juegos - Características del Sonido</h2>
+<div class="container">
+    <h2>Catálogo de Juegos - Características del Sonido</h2>
 
+    <div class="table-wrapper">
         <table>
             <tr>
                 <td><img src="Imagenes/juego01.jpg" alt="Juego 01"></td>
@@ -26,11 +27,12 @@
                 <td><a href="Juego 05/gral/gral.html" onclick="setRutina('Juego 05')">Juego 05</a></td>
             </tr>
         </table>
-
-        <button id="backButton" onclick="goBackToGames()" style="background-color: #2980b9; width: 40%; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Menú de Juegos</button>
-
-        <button id="homeButton" onclick="goToHome()" style="width: 40%; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Volver al Inicio</button>
     </div>
+
+    <button id="backButton" onclick="goBackToGames()">Volver al Menú de Juegos</button>
+    <button id="homeButton" onclick="goToHome()">Volver al Inicio</button>
+</div>
+
 
     <script src="script.js"></script>
     <script>
