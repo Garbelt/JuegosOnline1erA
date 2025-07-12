@@ -42,6 +42,17 @@ body, html {
   box-sizing: border-box;
 }
 
+    /* Quitar borde inferior de las celdas de la fila 1 */
+.table-wrapper tr:nth-child(1) td {
+  border-bottom: none;
+}
+
+/* Quitar borde superior de las celdas de la fila 2 */
+.table-wrapper tr:nth-child(2) td {
+  border-top: none;
+  padding-top: 0; /* Opcional para juntar más */
+}
+
 .table-wrapper table {
   width: 100%;
   border-collapse: collapse;
