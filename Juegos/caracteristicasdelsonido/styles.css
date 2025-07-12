@@ -69,11 +69,13 @@ button {
 }
 
 #backButton {
+  width:50%;
   background-color: #2980b9;
   color: white;
 }
 
 #homeButton {
+  width:50%;
   background-color: #ddd;
 }
 
