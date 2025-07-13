@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HISTORIAL DE JUEGOS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+    }
+
+    .container, .recent-container {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      width: 50%;
+      margin-top: 20px;
+      background-color: #f9f9f9;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .title-line1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .title-line2 {
+      font-size: 14px;
+      margin: 5px 0 0 0;
+      font-weight: normal;
+      color: #555;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: red;
+    }
+
+    .button-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .button {
+      width: 250px;
+      max-width: 90%;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      text-align: center;
+      background-color: #004080;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #002f5d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <center>
+      <h1 class="title-line1">HISTORIAL DE JUEGOS</h1>
+      <h2 class="title-line2">IDENTIFICAR Y COMPARAR PARES DE SONIDOS</h2>
+    </center>
+    <table id="games-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha</th>
+          <th>Usuario</th>
+          <th>Puntaje</th>
+        </tr>
+      </thead>
+      <tbody id="games-history">
+        <tr><td colspan="4">Cargando historial...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="recent-container" class="recent-container" style="display: none;">
+    <center>
+      <h2 class="title-line2">TU MEJOR PUNTAJE HASTA AHORA</h2>
+    </center>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha</th>
+          <th>Usuario</th>
+          <th>Puntaje</th>
+        </tr>
+      </thead>
+      <tbody id="recent-game-history"></tbody>
+    </table>
+  </div>
+
+  <div class="button-container">
+    <button id="backButton" class="button">CONTINUAR</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVZaysx9d6u6P13DYINPtcinpf79Sgx4U",
+      authDomain: "juego001-469b6.firebaseapp.com",
+      databaseURL: "https://juego001-469b6-default-rtdb.firebaseio.com",
+      projectId: "juego001-469b6",
+      storageBucket: "juego001-469b6.appspot.com",
+      messagingSenderId: "528847999661",
+      appId: "1:528847999661:web:6085a104fe64262a042c24"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const usuarioActual = localStorage.getItem('ActualUs') || '';
+    let usuariosGlobal = {};
+
+    async function obtenerUsuarios() {
+      const snap = await database.ref('usuarios').once('value');
+      usuariosGlobal = snap.val() || {};
+      return usuariosGlobal[usuarioActual] || {};
+    }
+
+    async function obtenerJuegos() {
+      const snap = await database.ref('games').once('value');
+      return snap.val() ? Object.values(snap.val()) : [];
+    }
+
+function filtrarJuegosPorPermisos(juegos, usuarioData) {
+  const permisos = usuarioData.permisos || {};
+  const escuelaUsuario = usuarioData.escuela || '';
+  const cursoUsuario = usuarioData.curso || '';
+
+  if (usuarioData.tipoEscuela === 'DOCENTE') return [];
+
+  let juegosVisibles = [];
+
+  if (permisos.general) {
+    juegosVisibles = juegos;
+  } else if (permisos.escuela) {
+    juegosVisibles = juegos.filter(j => {
+      const escuelaJ = usuariosGlobal[j.usuario]?.escuela || '';
+      return j.usuario === usuarioActual || escuelaJ === escuelaUsuario;
+    });
+  } else if (permisos.curso) {
+    juegosVisibles = juegos.filter(j => {
+      const escuelaJ = usuariosGlobal[j.usuario]?.escuela || '';
+      const cursoJ = usuariosGlobal[j.usuario]?.curso || '';
+      return j.usuario === usuarioActual || (escuelaJ === escuelaUsuario && cursoJ === cursoUsuario);
+    });
+  } else if (permisos.cursoOtrasEscuelas) {
+    juegosVisibles = juegos.filter(j => {
+      const cursoJ = usuariosGlobal[j.usuario]?.curso || '';
+      return j.usuario === usuarioActual || cursoJ === cursoUsuario;
+    });
+  } else {
+    juegosVisibles = juegos.filter(j => j.usuario === usuarioActual);
+  }
+
+  // 🔒 Filtro adicional para que los usuarios con permiso 'oculto' no aparezcan en los resultados, salvo ellos mismos
+  juegosVisibles = juegosVisibles.filter(j => {
+    const permisosAutor = usuariosGlobal[j.usuario]?.permisos || {};
+    return j.usuario === usuarioActual || !permisosAutor.oculto;
+  });
+
+  return juegosVisibles;
+}
+
+
+
+function mostrarHistorial(juegos) {
+  const tbody = document.getElementById('games-history');
+  const recentTbody = document.getElementById('recent-game-history');
+  const recentContainer = document.getElementById('recent-container');
+
+  const juegosDPS = juegos.filter(j => j.game === 'TM_rcnc');
+
+  if (!juegosDPS.length) {
+    tbody.innerHTML = "<tr><td colspan='4'>No hay historial disponible.</td></tr>";
+    recentContainer.style.display = 'none';
+  } else {
+    const ranking = [...juegosDPS].sort((a, b) => b.puntaje - a.puntaje);
+    const top5 = ranking.slice(0, 5);
+
+    tbody.innerHTML = top5.map((j, idx) =>
+      `<tr><td>${idx + 1}</td><td>${j.fecha}</td><td>${j.usuario}</td><td>${j.puntaje}</td></tr>`
+    ).join('');
+
+    // Buscamos el mejor puntaje del usuario actual (no el último)
+    const juegosUsuario = ranking.filter(j => j.usuario === usuarioActual);
+
+    if (juegosUsuario.length) {
+      // El juego con el mayor puntaje
+      const mejorJuego = juegosUsuario.reduce((max, curr) => curr.puntaje > max.puntaje ? curr : max, juegosUsuario[0]);
+      // Calculamos el puesto del mejor juego
+      const puesto = ranking.findIndex(j => j === mejorJuego) + 1;
+
+      recentTbody.innerHTML = `<tr class="highlight">
+        <td>${puesto}</td>
+        <td>${mejorJuego.fecha}</td>
+        <td>${mejorJuego.usuario}</td>
+        <td>${mejorJuego.puntaje}</td>
+      </tr>`;
+
+      recentContainer.style.display = 'block';
+    } else {
+      recentContainer.style.display = 'none';
+    }
+  }
+}
+
+
+
+    async function cargarTodo() {
+      if (!usuarioActual) {
+        alert("Usuario no definido. Regresa al login.");
+        return;
+      }
+
+      try {
+        const usuarioData = await obtenerUsuarios();
+        const juegos = await obtenerJuegos();
+        const juegosFiltrados = filtrarJuegosPorPermisos(juegos, usuarioData);
+        mostrarHistorial(juegosFiltrados);
+      } catch (error) {
+        alert("Error al cargar historial: " + error.message);
+      }
+    }
+
+    document.getElementById('backButton').addEventListener('click', () => {
+      window.location.href = "../2/2.html";
+    });
+
+    cargarTodo();
+  </script>
+
+</body>
+</html>
