@@ -1,0 +1,31 @@
+﻿/* =============================
+   Adaptadores de diseño
+   ============================= */
+
+/* Diseño base: no tocamos nada aquí,
+   solo agregamos ajustes responsivos abajo */
+
+
+/* 1) Escala automática en celulares horizontales */
+@media screen and (max-width: 900px) and (orientation: landscape) {
+  .container {
+    transform: scale(0.8);   /* achica solo en celulares */
+    transform-origin: bottom center; /* apoya desde abajo */
+  }
+}
+
+/* 2) Ajuste fino en celulares más angostos (ej. 600px o menos) */
+@media screen and (max-width: 600px) and (orientation: landscape) {
+  .container {
+    transform: scale(0.7);
+    transform-origin: bottom center;
+  }
+}
+
+/* 3) Vertical en celulares → ocupa toda la pantalla normalmente */
+@media screen and (max-width: 600px) and (orientation: portrait) {
+  .container {
+    transform: scale(1);
+    transform-origin: center center;
+  }
+}
