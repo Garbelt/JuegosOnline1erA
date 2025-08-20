@@ -1,0 +1,54 @@
+﻿.found-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #8ec6e6;
+  color: black;
+  padding: 20px;
+  border: 2px solid #333;
+  border-radius: 10px;
+  font-size: 24px;
+  z-index: 9999;
+  text-align: center;
+  width: 80%;
+  max-width: 500px;
+  display: none;
+}
+
+
+.found-message.correct {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #d4edda;
+    color: #155724;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    font-size: 24px;
+    text-transform: uppercase;
+    z-index: 9999;
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+}
+
+.found-message.error {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    font-size: 24px;
+    text-transform: uppercase;
+    z-index: 9999;
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+}
