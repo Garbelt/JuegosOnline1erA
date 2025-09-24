@@ -1,0 +1,71 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+
+    display: flex;
+    justify-content: center;     /* Centrado horizontal */
+    align-items: center;         /* Centrado vertical */
+}
+
+.container {
+    max-width: 400px;
+    width: 90%; /* Para pantallas pequeñas */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+}
+
+h3 {
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: left;
+    color: #333;  /* Color suave */
+}
+
+input[type="text"] {
+    width: 95%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#menuButton {
+    background-color: #2980b9; /* Azul oscuro */
+    color: #fff;
+    margin-top: 0;
+}
+
+#registrationButton {
+    background-color: #3498db; /* Azul claro */
+    color: #fff;
+    margin-top: 10px;
+}
+
+button:hover, #menuButton:hover, #registrationButton:hover {
+    filter: brightness(90%);
+}

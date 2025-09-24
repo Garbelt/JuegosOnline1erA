@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menú de Temas - AFINANDO CONOCIMIENTOS</title>
+<style>
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 700px;
+    min-height: 400px;
+    max-height: 80vh;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+#menuButtons {
+    flex: 1;
+    overflow-y: auto;
+    margin: 10px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.themeButton {
+    width: calc(100% - 10px);
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #2980b9;
+    color: #fff;
+}
+
+.themeButton:hover {
+    background-color: #3498db;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+}
+
+#backtoareaButton {
+    width: calc(50% - 5px);
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 5px;
+    background-color: #ddd;
+    color: black;
+}
+
+#backtoareaButton:hover {
+    background-color: #bbb;
+}
+
+@media (max-width: 450px) {
+    .container {
+        width: 95%;
+        max-width: 400px;
+    }
+    .header h2 {
+        font-size: 18px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>ÁREAS</h2>
+    </div>
+    <ul id="menuButtons"></ul>
+
+    <div class="buttonContainer">
+        <button id="backtoareaButton" onclick="goToIndex()">VOLVER</button>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
+
+<script>
+// ===== Configuración de Firebase =====
+const firebaseConfig = {
+    apiKey: "AIzaSyBVZaysx9d6u6P13DYINPtcinpf79Sgx4U",
+    authDomain: "juego001-469b6.firebaseapp.com",
+    databaseURL: "https://juego001-469b6-default-rtdb.firebaseio.com",
+    projectId: "juego001-469b6",
+    storageBucket: "juego001-469b6.appspot.com",
+    messagingSenderId: "528847999661",
+    appId: "1:528847999661:web:6085a104fe64262a042c24"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
+
+// ===== Verificar login con Firebase y localStorage =====
+const correo = localStorage.getItem('correo');
+const password = localStorage.getItem('password');
+
+if (!correo || !password) {
+    alert("Debes iniciar sesión primero.");
+    window.location.href = "../index.html";
+} else {
+    auth.signInWithEmailAndPassword(correo, password)
+    .then(() => {
+        // Login válido: inicializar menú
+        generateMenu("menuButtons");
+    })
+    .catch(err => {
+        alert("Sesión inválida o expirada. Vuelve a iniciar sesión.");
+        window.location.href = "../index.html";
+    });
+}
+
+// ===== Datos de los temas =====
+const menuData = [
+  { title: "MÚSICA", key: "musica", url: "musica.html" },
+];
+
+// ===== Funciones del menú =====
+function generateMenu(containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  menuData.forEach(item => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.classList.add("themeButton");
+    btn.textContent = item.title;
+
+    btn.addEventListener("click", () => {
+      localStorage.setItem("submenu", "juegos");
+      showSubMenu(item.key);
+    });
+
+    li.appendChild(btn);
+    container.appendChild(li);
+  });
+}
+
+function showSubMenu(key) {
+  const item = menuData.find(i => i.key === key);
+  if (item) window.location.href = item.url;
+  else console.error("No hay submenú definido para el tema seleccionado.");
+}
+
+function goToIndex() {
+  window.location.href = '../index.html';
+}
+</script>
+</body>
+</html>
