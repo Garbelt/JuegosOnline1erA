@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Juegos - Canciones Patrias</title>
+    <link rel="stylesheet" href="styles.css">
+
+<style>
+body, html {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+}
+
+.container {
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  width: 95%;
+  max-width: 850px;
+  background: white;
+  box-sizing: border-box;
+  min-height: 300px;
+}
+
+.table-wrapper {
+  display: block;
+  border: 2px solid #555;        /* Borde exterior visible */
+  padding: 10px;
+  border-radius: 5px;
+  background-color: white;
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Quitar borde inferior de las celdas de la fila 1 */
+.table-wrapper tr:nth-child(1) td {
+  border-bottom: none;
+}
+
+/* Quitar borde superior de las celdas de la fila 2 */
+.table-wrapper tr:nth-child(2) td {
+  border-top: none;
+  padding-top: 0; /* Opcional para juntar más */
+}
+
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table-wrapper td {
+  border: 1px solid #555;         /* Borde interior entre celdas */
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-wrapper img {
+  width: 100%;
+  max-width: 80px;
+  height: auto;
+}
+
+.table-wrapper a {
+  display: block;
+  margin-top: 8px;
+}
+
+/* Botones */
+#backButton, #homeButton {
+  width: 75%;
+  max-width: 425px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: block;
+  margin: 15px auto;
+}
+
+#backButton {
+  background-color: #2980b9;
+  color: white;
+}
+
+#backButton:hover {
+  background-color: #1c5ea8;
+}
+
+#homeButton {
+  background-color: #ddd;
+  color: black;
+}
+
+#homeButton:hover {
+  background-color: #bbb;
+}
+
+/* Responsive SOLO para tabla e imágenes */
+@media (max-width: 600px) {
+  .table-wrapper td {
+    padding: 5px;
+  }
+
+  .table-wrapper img {
+    max-width: 60px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Catálogo de Juegos - Características del Sonido</h2>
+
+    <div class="table-wrapper">
+    <table>
+            <tr>
+                <td><img src="Imagenes/juego01.jpg" alt="Juego 01"></td>
+                <td><img src="Imagenes/juego02.jpg" alt="Juego 02"></td>
+                <td><img src="Imagenes/juego03.jpg" alt="Juego 03"></td>
+                <td><img src="Imagenes/juego04.jpg" alt="Juego 04"></td>
+                <td><img src="Imagenes/juego05.jpg" alt="Juego 05"></td>
+            </tr>
+            <tr>
+                <td><a href="Juego 01/gral/gral.html" onclick="setRutina('Juego 01')">Juego 01</a></td>
+                <td><a href="Juego 02/gral/gral.html" onclick="setRutina('Juego 02')">Juego 02</a></td>
+                <td><a href="Juego 03/gral/gral.html" onclick="setRutina('Juego 03')">Juego 03</a></td>
+                <td><a href="Juego 04/gral/gral.html" onclick="setRutina('Juego 04')">Juego 04</a></td>
+                <td><a href="Juego 05/gral/gral.html" onclick="setRutina('Juego 05')">Juego 05</a></td>
+            </tr>
+    </table>
+</div>
+
+
+<button id="backButton" onclick="goBackToGames()">Volver al Menú de Juegos</button>
+<button id="homeButton" onclick="goToHome()">Volver al Inicio</button>
+
+</div>
+
+
+    <script src="script.js"></script>
+    <script>
+        function setRutina(gameName) {
+            const codigo = "01cancionesDTA";
+            const rutina = `${codigo}_${gameName}`;
+            localStorage.setItem("rutina", rutina);
+            localStorage.setItem("acumulado", 0);
+            localStorage.setItem("pass", 0); // 🔹 Reinicia el contador en 1
+            console.log(`Se ha almacenado la rutina: ${rutina}`);
+            console.log(`Se ha inicializado el acumulado: 0`);
+        }
+
+        function goBackToGames() {
+            window.location.href = '../../Menu/Juegos.html';
+        }
+
+        function goToHome() {
+            window.location.href = '../../index.html';
+        }
+    </script>
+</body>
+</html>
