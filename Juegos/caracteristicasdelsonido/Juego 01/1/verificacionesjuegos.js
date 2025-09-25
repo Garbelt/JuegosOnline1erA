@@ -1,4 +1,4 @@
-﻿let mensajePendiente = null; // Primer mensaje a mostrar
+let mensajePendiente = null; // Primer mensaje a mostrar
 let mensajeSecundario = null; // Segundo mensaje
 let audioPrimero = null;
 let audioSegundo = null;
@@ -14,6 +14,9 @@ window.addEventListener("load", async () => {
 
     // 1️⃣ Verificación de login
     if (!correo || !password) {
+        // 🚨 Si no hay datos en localStorage → forzar signOut de Firebase
+        firebase.auth().signOut().catch(err => console.error("Error cerrando sesión:", err));
+
         setMensajesPendientes(
             "DEBES INICIAR SESIÓN.",
             "SE TE REDIRIGIRÁ AL INICIO.",
