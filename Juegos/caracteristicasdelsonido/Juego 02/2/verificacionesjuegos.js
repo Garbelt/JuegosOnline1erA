@@ -7,7 +7,7 @@ window.addEventListener("load", async () => {
     const correo = localStorage.getItem('correo');
     const password = localStorage.getItem('password');
     const uid = localStorage.getItem('uid');
-    const juegoCode = "DPS_rcnc";
+    const juegoCode = "TM_rcnc";
 
     const startButton = document.getElementById("start-button");
     startButton.classList.add("disable-clicks");
@@ -134,3 +134,4 @@ function mostrarMensajesSecuenciales(msg1, msg2, audio1, audio2) {
         }, 3000);
     }, 3000);
 }
+
