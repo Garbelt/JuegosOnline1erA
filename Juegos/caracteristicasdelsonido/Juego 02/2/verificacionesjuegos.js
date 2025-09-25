@@ -7,13 +7,16 @@ window.addEventListener("load", async () => {
     const correo = localStorage.getItem('correo');
     const password = localStorage.getItem('password');
     const uid = localStorage.getItem('uid');
-    const juegoCode = "TM_rcnc";
+    const juegoCode = "TN_rcnc";
 
     const startButton = document.getElementById("start-button");
     startButton.classList.add("disable-clicks");
 
     // 1️⃣ Verificación de login
     if (!correo || !password) {
+        // 🚨 Si no hay datos en localStorage → forzar signOut de Firebase
+        firebase.auth().signOut().catch(err => console.error("Error cerrando sesión:", err));
+
         setMensajesPendientes(
             "DEBES INICIAR SESIÓN.",
             "SE TE REDIRIGIRÁ AL INICIO.",
@@ -134,4 +137,3 @@ function mostrarMensajesSecuenciales(msg1, msg2, audio1, audio2) {
         }, 3000);
     }, 3000);
 }
-
