@@ -1,0 +1,782 @@
+﻿﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identificar y comparar diferencia entre 2 sonidos</title>
+    <link rel="stylesheet" href="mensajes.css">
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="adaptadores.css" />
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
+<script src="verificacionesjuegos.js"></script>
+<script>
+  const firebaseConfig = {
+      apiKey: "AIzaSyBVZaysx9d6u6P13DYINPtcinpf79Sgx4U",
+      authDomain: "juego001-469b6.firebaseapp.com",
+      databaseURL: "https://juego001-469b6-default-rtdb.firebaseio.com",
+      projectId: "juego001-469b6",
+      storageBucket: "juego001-469b6.appspot.com",
+      messagingSenderId: "528847999661",
+      appId: "1:528847999661:web:6085a104fe64262a042c24"
+  };
+
+  // Inicialización
+  firebase.initializeApp(firebaseConfig);
+
+  // Referencias
+  const database = firebase.database();
+  const auth = firebase.auth();
+</script>
+
+    <style>
+td {
+    width: 20%; /* Por ejemplo, tres celdas iguales */
+    max-width: 20%;
+    min-width: 20%;
+    box-sizing: border-box;
+    
+}
+
+.celda-izquierda {
+    width: 30%;   /* 40% del ancho de la tabla */
+    max-width: 30%;
+    min-width: 30%;
+}
+
+.celda-centro {
+    width: 45%;   /* 35% */
+    max-width: 45%;
+    min-width: 45%;
+    vertical-align: middle;
+}
+
+.inner-table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse; /* Eliminar espacio entre celdas */
+}
+
+.inner-cell {
+    border: none; /* Sin bordes visibles */
+    text-align: center;
+    vertical-align: middle;
+}
+
+.button-cell {
+    height: 50%; /* La celda del botón más alta */
+}
+
+.detail-cell {
+    height: 20%; /* Cada celda de detalle más baja */
+}
+
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            margin: 0 10px;
+            padding: 7px 15px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .custom-button {
+            text-transform: none !important;
+        }
+
+       .split-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .split-cell > div {
+            flex: 1;
+        }
+
+        .split-cell button {
+            margin-top: auto;
+        }
+
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border: 2px solid #333;
+            font-size: 24px;
+            z-index: 9999;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+            display: none;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .message.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message.FINAL1 {
+            background-color: #8ec6e6;
+            color: black;
+        }
+
+        #instrument-details, #instrument-detail {
+            text-transform: uppercase;
+        }
+
+        #instrument-detail {
+            color: #FF5733;
+            font-size: 1.2em;
+        }
+
+        #instrument-details {
+            color: green;
+            font-size: 1.2em;
+        }
+
+        .found-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #8ec6e6;
+            color: black;
+            padding: 20px;
+            border: 2px solid #333;
+            font-size: 18px;
+            z-index: 9999;
+            text-align: center;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .button-group button, #button-container button {
+            text-transform: capitalize;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .button-group button:hover, #button-container button:hover {
+            text-decoration: underline;
+        }
+#play-sound-button {
+    margin-top: 10px;
+    width: 80%;                 /* Ocupa 80% del ancho de la celda */
+    padding: 10px 10px;         /* Espaciado interno */
+    font-size: clamp(12px, 2vw, 18px);  /* Tamaño adaptable según pantalla */
+    cursor: pointer;
+    border: 1px solid #444;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+#play-sound-button:hover:not(:disabled) {
+    background-color: #ddd;
+    transform: scale(1.05);
+}
+
+#play-sound-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+
+
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+    </style>
+</head>
+<body>
+<div id="start-button-container">
+  <button id="start-button" class="disable-clicks">Identificar y comparar diferencia entre dos sonidos</button>
+</div>
+
+
+    <div class="container">
+        <table>
+<tr>
+  <th colspan="3" class="title-cell" style="text-align: center;">
+    <span class="titulo-principal">HOY RECONOCEMOS...</span><br>
+    <span class="titulo-secundario">La diferencia entre dos sonidos</span>
+  </th>
+</tr>
+             <tr>
+
+<td id="align-center-center" class="celda-izquierda">
+    <table class="inner-table">
+        <tr>
+            <td class="inner-cell button-cell">
+                <button id="play-sound-button">Reproducir Sonido</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="inner-cell detail-cell">
+                <div id="instrument-details"></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="inner-cell detail-cell">
+                <div id="instrument-detail"></div>
+            </td>
+        </tr>
+    </table>
+</td>
+
+
+
+                <td id="button-container" class="celda-centro">
+                    <center><button id="timbre-button">Timbre</button></center>
+                    <center><button id="altura-button">Altura</button></center>
+                    <center><button id="duracion-button">Duración</button></center>
+                    <center><button id="volumen-button">Volumen</button></center>
+                </td>
+                <td id="align-left-top" class="celda-panel">
+                    <div id="panel">
+                        <div id="actualUsername"></div>
+                        <br>
+                        <div id="reloj">Tiempo: 06:00</div>
+                        <div id="puntaje">Puntaje: 0</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+    <audio id="background-music" loop>
+        <source src="Sound/CancionFondo.mp3" type="audio/mpeg">
+        Tu navegador no soporta la reproducción de audio.
+    </audio>
+
+    <audio id="instrument-sound"></audio>
+    <audio id="error-sound" src="sound/fx/error.mp3"></audio>
+    <audio id="correct-sound" src="sound/fx/correcto.mp3"></audio>
+    <audio id="timbre-audio" src="sound/lector/timbre.mp3"></audio>
+    <audio id="altura-audio" src="sound/lector/altura.mp3"></audio>
+    <audio id="duracion-audio" src="sound/lector/duracion.mp3"></audio>
+    <audio id="volumen-audio" src="sound/lector/volumen.mp3"></audio>
+    <div class="message" id="message"></div>
+
+    <script>
+        window.addEventListener("load", function() {
+            const actualUsername = localStorage.getItem("ActualUs");
+            document.getElementById("actualUsername").textContent = `Usuario: ${actualUsername}`;
+        });
+
+document.getElementById("start-button").addEventListener("click", function() {
+    // Ya no verificamos la habilitación
+    document.getElementById("start-button-container").style.display = "none";
+    document.querySelector(".container").style.display = "block";
+    startGame();
+});
+
+
+        document.getElementById("play-sound-button").addEventListener("click", playSound);
+        document.getElementById("timbre-button").addEventListener("click", () => checkInstrumentType("timbre"));
+        document.getElementById("altura-button").addEventListener("click", () => checkInstrumentType("altura"));
+        document.getElementById("duracion-button").addEventListener("click", () => checkInstrumentType("duracion"));
+        document.getElementById("volumen-button").addEventListener("click", () => checkInstrumentType("volumen"));
+        document.getElementById("timbre-button").addEventListener("mouseover", () => playAudio("timbre-audio"));
+        document.getElementById("altura-button").addEventListener("mouseover", () => playAudio("altura-audio"));
+        document.getElementById("duracion-button").addEventListener("mouseover", () => playAudio("duracion-audio"));
+        document.getElementById("volumen-button").addEventListener("mouseover", () => playAudio("volumen-audio"));
+
+        
+        let score = 0;
+        let playedSounds = [];
+
+        const instruments = [
+            // Definición de los instrumentos con su tipo,
+
+	{ name: "fuerte y suave", type: "volumen", src: "sound/01.mp3" },
+	{ name: "grave y agudo", type: "altura", src: "sound/02.mp3" },
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/03.mp3" },
+	{ name: "grave y agudo", type: "altura", src: "sound/04.mp3" },
+	{ name: "suave y fuerte", type: "volumen", src: "sound/05.mp3" },
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/06.mp3" },
+	{ name: "agudo y grave", type: "altura", src: "sound/07.mp3" },
+	{ name: "suave y fuerte", type: "volumen", src: "sound/08.mp3" },
+	{ name: "corto y largo", type: "duracion", src: "sound/09.mp3" },
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/10.mp3" },
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/11.mp3" },
+	{ name: "suave y fuerte", type: "volumen", src: "sound/12.mp3" },
+	{ name: "largo y corto", type: "duracion", src: "sound/13.mp3" },
+	{ name: "agudo y grave", type: "altura", src: "sound/14.mp3" },
+	{ name: "suave y fuerte", type: "volumen", src: "sound/15.mp3" },
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/16.mp3" },
+	{ name: "agudo y grave", type: "altura", src: "sound/17.mp3" },
+	{ name: "largo y corto", type: "duracion", src: "sound/18.mp3" },
+	{ name: "agudo y grave", type: "altura", src: "sound/19.mp3" },
+	{ name: "grave y agudo", type: "altura", src: "sound/20.mp3" },	
+	{ name: "corto y largo", type: "duracion", src: "sound/21.mp3" },	
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/22.mp3" },
+	{ name: "agudo y grave", type: "altura", src: "sound/23.mp3" },	
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/24.mp3" },
+	{ name: "grave y agudo", type: "altura", src: "sound/25.mp3" },	
+	{ name: "son distintos instrumentos", type: "timbre", src: "sound/26.mp3" },
+	{ name: "largo y corto", type: "duracion", src: "sound/27.mp3" },
+	{ name: "grave y agudo", type: "altura", src: "sound/28.mp3" },	
+	{ name: "fuerte y suave", type: "volumen", src: "sound/29.mp3" },
+	{ name: "agudo y grave", type: "altura", src: "sound/30.mp3" },				
+        ];
+
+
+
+let tiempoRestante = 30; // 6 minutos
+
+function actualizarReloj() {
+    const minutos = Math.floor(tiempoRestante / 60);
+    
+ 
+const segundos = tiempoRestante % 60;
+    const tiempoFormateado = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    document.getElementById("reloj").textContent = `Tiempo: ${tiempoFormateado}`;
+}
+
+        function iniciarTemporizador() {
+            temporizador = setInterval(() => {
+                if (tiempoRestante <= 0) {
+                    stopClock();
+		    disableClicks()
+                    showMessage("FIN DE ESTE JUEGO", "FINAL1");
+		    setTimeout(almacenarDatosYRedireccionar, 5000);
+                } else {
+                    tiempoRestante--;
+                    actualizarReloj();
+                }
+            }, 1000);
+        }
+
+        function stopClock() {
+            clearInterval(temporizador);
+            return tiempoRestante;
+        }
+
+
+
+
+async function autoLogin() {
+    const correo = localStorage.getItem("correo");
+    const password = localStorage.getItem("password");
+
+    if (!correo || !password) {
+        console.warn("No hay credenciales en localStorage.");
+        return false;
+    }
+
+    try {
+        await firebase.auth().signInWithEmailAndPassword(correo, password);
+        console.log("Auto-login exitoso:", correo);
+        return true;
+    } catch (error) {
+        console.error("Error en auto-login:", error);
+        return false;
+    }
+}
+
+async function almacenarDatosYRedireccionar() {
+    const loginExitoso = await autoLogin();
+
+    const currentDate = new Date().toLocaleDateString();
+    const usuario = localStorage.getItem("ActualUs");
+    const juegonumero = incrementGameNumber();
+
+    const title = "Reconocer diferencia entre pares de sonido";
+    const gameCode = "DPS_rcnc";
+
+    // Guardar en localStorage
+    const userData = {
+        fecha: currentDate,
+        usuario: usuario,
+        correo: localStorage.getItem("correo"),
+        puntaje: score,
+        juegonumero: juegonumero,
+        title: title,
+        game: gameCode
+    };
+    const gamesHistory = JSON.parse(localStorage.getItem("gamesHistory")) || [];
+    gamesHistory.push(userData);
+    localStorage.setItem("gamesHistory", JSON.stringify(gamesHistory));
+
+    // Guardar en Firebase solo si login fue exitoso
+    if (loginExitoso) {
+        const firebaseData = {
+            fecha: currentDate,
+            usuario: usuario,
+            game: gameCode,
+            title: title,
+            puntaje: score
+        };
+
+        const newGameKey = firebase.database().ref().child('games').push().key;
+        const updates = {};
+        updates['/games/' + newGameKey] = firebaseData;
+
+        try {
+            await firebase.database().ref().update(updates);
+            console.log("Datos guardados correctamente en Firebase.");
+        } catch (error) {
+            console.error("Error guardando datos en Firebase:", error);
+        }
+    } else {
+        console.warn("No se pudo guardar en Firebase por fallo en el login.");
+    }
+
+    window.location.href = "out.html";
+}
+
+
+
+
+
+function incrementGameNumber() {
+    let gameNumber = parseInt(localStorage.getItem("juegonumero")) || 0;
+    gameNumber++;
+    localStorage.setItem("juegonumero", gameNumber);
+    return gameNumber;
+}
+
+function disableClicks() {
+    document.body.classList.add("disable-clicks");
+    setTimeout(() => {         
+enableClicks(); // Habilitar clics después de 1 segundo
+    }, 2500); // 2500 milisegundos = 2,5 segundo
+}
+
+function enableClicks() {
+    document.body.classList.remove("disable-clicks");
+}
+
+function startGame() {
+    iniciarTemporizador();
+    score = 0;
+    playedSounds = [];
+    generateRandomOrder(); // Generar el orden aleatorio al inicio del juego
+    initializeSoundOrder(); // Inicializar soundOrder al inicio del juego
+    updateScore();
+    playBackgroundMusic();
+    assignNextSound(); // Asignar el primer sonido de la lista
+    showInitialButtons();
+}
+
+
+
+let soundOrder = [];
+let currentSoundIndex = 0;
+let currentInstrument;
+
+function generateRandomOrder() {
+    soundOrder = shuffleArray(instruments.map((_, index) => index));
+}
+
+function initializeSoundOrder() {
+    soundOrder = Array.from({ length: instruments.length }, (_, i) => i);
+    shuffleArray(soundOrder); // Mezclar el orden de los sonidos
+    currentSoundIndex = 0;
+    console.log("Initial soundOrder:", soundOrder); // Añadir este log
+}
+
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function assignNextSound() {
+    if (soundOrder.length === 0) {
+        showMessage("HAS COMPLETADO EL JUEGO", "FINAL1");
+        
+        // Esperar 5 segundos antes de continuar
+        setTimeout(() => {
+            // Aquí puedes agregar cualquier otra acción que necesites después de los 5 segundos
+        }, 5000);
+ 		return;
+ 	   }
+
+
+    // Verificar si el índice actual está fuera del rango después de eliminar un instrumento
+    if (currentSoundIndex >= soundOrder.length) {
+        currentSoundIndex = 0;
+    }
+
+    const nextIndex = soundOrder[currentSoundIndex];
+    currentInstrument = instruments[nextIndex];
+    document.getElementById('play-sound-button').setAttribute('data-sound', currentInstrument.src);
+    console.log("Assigning sound for instrument:", currentInstrument.name, "Current soundOrder:", soundOrder);
+}
+
+
+
+
+
+
+function playSound() {
+    const instrumentSound = document.getElementById("instrument-sound");
+    instrumentSound.src = currentInstrument.src;
+    instrumentSound.play();
+}
+
+
+
+
+function checkInstrumentType(type) {
+    if (currentInstrument.type === type) {
+        disableClicks();
+        showMessage("CORRECTO", "correct");
+        document.getElementById("correct-sound").play();  // Reproducir sonido correcto
+        score += 5; // Incrementar el puntaje en 5
+        updateScore();
+        appendInstrumentDetail(type);
+        setTimeout(() => {
+            loadInstrumentNameButtons();
+        }, 2000);
+    } else {
+        disableClicks();
+        showMessage("ERROR", "error");
+        playErrorSound();  // Reproducir sonido de error
+	currentSoundIndex++;
+        assignNextSound(); // Cambiar el sonido al primer error
+        setTimeout(() => {
+            showInitialButtons(); // Vuelve a la primera instancia con un nuevo sonido
+        }, 2000);
+    }
+}
+
+
+
+
+
+
+
+
+function loadInstrumentNameButtons() {
+    enableClicks();
+    const buttonContainer = document.getElementById("button-container");
+    buttonContainer.innerHTML = "";
+
+    const buttonNames = [
+        "son distintos instrumentos",
+        "suave y fuerte",
+        "fuerte y suave",
+        "agudo y grave",
+        "grave y agudo",
+        "corto y largo",
+        "largo y corto"
+    ];
+
+    buttonNames.forEach(name => {
+        const button = document.createElement("button");
+        button.textContent = name;
+        button.classList.add("custom-button");
+
+        const audio = new Audio(`sound/lector/${name}.mp3`);
+        button.addEventListener("mouseover", () => audio.play());
+        button.addEventListener("mouseout", () => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+
+        button.addEventListener("click", () => checkInstrumentName(name));
+        buttonContainer.appendChild(button);
+    });
+}
+
+
+
+       
+
+function checkInstrumentName(name) {
+    if (currentInstrument.name === name) {
+        disableClicks();
+        showMessage("CORRECTO", "correct");
+        document.getElementById("correct-sound").play();  // Reproducir sonido correcto
+        score += 40; // Incrementar el puntaje en 40
+        updateScore();
+        appendInstrumentDetail2(name);
+        removeFromSoundOrder(name); // Eliminar el instrumento de la lista soundOrder
+        setTimeout(() => {
+            showInitialButtons(); // Vuelve a la primera instancia con un nuevo sonido
+        }, 5000);
+    } else {
+        disableClicks();
+        showMessage("ERROR", "error");
+        playErrorSound();  // Reproducir sonido de error
+	currentSoundIndex++;
+        assignNextSound(); // Cambiar el sonido al primer error
+        setTimeout(() => {
+            showInitialButtons(); // Vuelve a la primera instancia con un nuevo sonido
+        }, 2000);
+    }
+}
+
+function removeFromSoundOrder(name) {
+    const index = soundOrder.findIndex(i => instruments[i].name === name);
+    if (index !== -1) {
+        soundOrder.splice(index, 1);
+    }
+    console.log("Removed instrument:", name, "Current soundOrder:", soundOrder); // Añadir este log
+}
+
+        function appendInstrumentDetail(detail) {
+            const instrumentDetails = document.getElementById("instrument-details");
+            const detailElement = document.createElement("div");
+            detailElement.textContent = detail;
+            instrumentDetails.appendChild(detailElement);
+        }
+
+	function appendInstrumentDetail2(detail) {
+            const instrumentDetails = document.getElementById("instrument-detail");
+            const detailElement = document.createElement("div");
+            detailElement.textContent = detail;
+            instrumentDetails.appendChild(detailElement);
+        }
+
+        function updateInstrumentImage(name) {
+            const instrumentImage = document.getElementById("instrument-image");
+            instrumentImage.src = `Image/${name}.jpg`;
+        }
+
+        function playAudio(audioId) {
+            const audio = document.getElementById(audioId);
+            audio.play();
+        }
+
+        function showMessage(message, type) {
+    const messageDiv = document.getElementById("message");
+    messageDiv.textContent = message;
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.display = "block";
+    setTimeout(() => {
+        messageDiv.style.display = "none";
+        }, 2000);
+}
+
+        function playErrorSound() {
+    const errorSound = document.getElementById("error-sound");
+    errorSound.play();
+}
+
+        function incrementScore() {
+            score++;
+        }
+
+        function updateScore() {
+    document.getElementById("puntaje").textContent = `Puntaje: ${score}`;
+}
+
+        function playBackgroundMusic() {
+            const backgroundMusic = document.getElementById("background-music");
+            backgroundMusic.play();
+        }
+
+function resetInterface() {
+    const instrumentImage = document.getElementById("instrument-image");
+    instrumentImage.src = `Image/Imagen.jpg`;
+
+    // Eliminar el instrumento actual de la lista soundOrder
+    const index = soundOrder.findIndex(i => instruments[i].name === currentInstrument.name);
+    if (index !== -1) {
+        soundOrder.splice(index, 1);
+    }
+
+    // Verificar si quedan instrumentos
+    if (soundOrder.length === 0) {
+        // Detener el reloj y calcular el bono
+        const remainingTime = stopClock(); // Esta función debería detener el reloj y devolver el tiempo restante en segundos
+        const initialInstrumentCount = instruments.length; // Suponiendo que 'instruments' es la lista inicial de instrumentos
+        const bonus = remainingTime * initialInstrumentCount;
+
+        // Actualizar el puntaje
+        score += bonus; // Suponiendo que 'score' es la variable que guarda el puntaje del jugador
+
+        // Mostrar el mensaje de felicitaciones con el bono
+        showBonusMessage(bonus);
+
+        // Reproducir el audio
+        const audio = new Audio('sound/fx/BienChicos.mp3');
+        audio.play();
+
+        // Esperar 5 segundos antes de llamar a almacenarDatosYRedireccionar
+        setTimeout(almacenarDatosYRedireccionar, 5000);
+        return;
+    }
+
+    // Reiniciar currentSoundIndex si está fuera de rango
+    if (currentSoundIndex >= soundOrder.length) {
+        currentSoundIndex = 0;
+    }
+
+    // Asignar el siguiente sonido
+    assignNextSound();
+    showInitialButtons();
+}
+
+function showBonusMessage(bonus) {
+    disableClicks(); // Disable clicks
+    const bonusMessageElement = document.createElement("div");
+    bonusMessageElement.innerHTML = `¡RECONOCISTE TODOS LOS INSTRUMENTOS!<br>GANASTE UN BONUS DE ${bonus} PUNTOS.`;
+    bonusMessageElement.classList.add("found-message");
+    document.body.appendChild(bonusMessageElement);
+    }
+
+
+
+
+
+
+function showInitialButtons() {
+    const buttonContainer = document.getElementById('button-container');
+    buttonContainer.innerHTML = `
+        <center><button id="timbre-button">Timbre</button></center>
+	<center><button id="altura-button">Altura</button></center>
+        <center><button id="duracion-button">Duración</button></center>
+        <center><button id="volumen-button">Volumen</button></center>
+    `;
+    document.getElementById('instrument-details').innerHTML = ''; // Limpiar los datos debajo del botón "Reproducir sonido"
+    document.getElementById('instrument-detail').innerHTML = ''; // Limpiar los datos debajo del botón "Reproducir sonido"
+    document.getElementById('timbre-button').addEventListener('click', () => checkInstrumentType('timbre'));
+    document.getElementById('altura-button').addEventListener('click', () => checkInstrumentType('altura'));
+    document.getElementById('duracion-button').addEventListener('click', () => checkInstrumentType('duracion'));
+    document.getElementById('volumen-button').addEventListener('click', () => checkInstrumentType('volumen'));
+    document.getElementById('timbre-button').addEventListener('mouseover', () => playAudio('timbre-audio'));
+    document.getElementById('altura-button').addEventListener('mouseover', () => playAudio('altura-audio'));
+    document.getElementById('duracion-button').addEventListener('mouseover', () => playAudio('duracion-audio'));
+    document.getElementById('volumen-button').addEventListener('mouseover', () => playAudio('volumen-audio'));
+    assignNextSound(); // Asignar un nuevo sonido aleatorio al botón "Reproducir sonido"
+    enableClicks();
+}
+
+</script>
+</body>
+</html>
