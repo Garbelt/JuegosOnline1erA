@@ -13,15 +13,17 @@ window.addEventListener("load", async () => {
     startButton.classList.add("disable-clicks");
 
     // 1 Verificación de login
-    if (!correo || !password) {
-        setMensajesPendientes(
-            "DEBES INICIAR SESIÓN.",
-            "SE TE REDIRIGIRÁ AL INICIO.",
-            "sound/fx/iniciarsesion.mp3",
-            "sound/fx/redireccionando.mp3"
-        );
-        return;
-    }
+if (!correo || !password || !uid) {
+    console.log("🚨 Paso 1: DEBES INICIAR SESIÓN");
+    setMensajesPendientes(
+        "DEBES INICIAR SESIÓN.",
+        "SE TE REDIRIGIRÁ AL INICIO.",
+        "sound/fx/iniciarsesion.mp3",
+        "sound/fx/redireccionando.mp3"
+    );
+    return;
+}
+
 
     // 2 Verificación de autenticación con Firebase
     firebase.auth().onAuthStateChanged(async (user) => {
@@ -134,3 +136,4 @@ function mostrarMensajesSecuenciales(msg1, msg2, audio1, audio2) {
         }, 3000);
     }, 3000);
 }
+
