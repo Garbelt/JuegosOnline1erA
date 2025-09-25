@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
@@ -99,10 +99,7 @@ table > tr:nth-child(2) > td:first-child { border-right: 0; width: 70%; padding:
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
-
-<!-- Script de verificaciones -->
 <script src="verificacionesjuegos.js"></script>
-
 <script>
   // Configuración Firebase
   const firebaseConfig = {
@@ -115,8 +112,30 @@ table > tr:nth-child(2) > td:first-child { border-right: 0; width: 70%; padding:
       appId: "1:528847999661:web:6085a104fe64262a042c24"
   };
   firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const database = firebase.database();
 
-  // === Variables y lógica del juego ===
+  // === Auto-login ===
+  async function autoLogin() {
+      const correo = localStorage.getItem("correo");
+      const password = localStorage.getItem("password");
+
+      if (!correo || !password) {
+          console.warn("No hay credenciales en localStorage.");
+          return false;
+      }
+
+      try {
+          await auth.signInWithEmailAndPassword(correo, password);
+          console.log("Auto-login exitoso:", correo);
+          return true;
+      } catch (error) {
+          console.error("Error en auto-login:", error);
+          return false;
+      }
+  }
+
+  // === Variables de juego ===
   let endGameExecuted = false;
   let clicksEnabled = true;
   let score = 0;
@@ -152,37 +171,177 @@ table > tr:nth-child(2) > td:first-child { border-right: 0; width: 70%; padding:
     { name: "22", type: "GAAG", sound: "Sound/Ejemplos/22.mp3" }
   ];
 
-  // Resto de funciones del juego: startGame, showNextInstrument, playInstrumentSound, timer, checkAnswer, endGame, showMessage, etc.
-  // (Mantener exactamente igual que tenías antes)
+  // === Funciones de juego ===
+  function startGame() {
+      endGameExecuted = false;
+      totalTimeInSeconds = 180;
+      errors = 0;
+      correctAnswers = 0;
+      score = 0;
+      document.getElementById("reloj").textContent = "Tiempo: 03:00";
+      updateErrorsDisplay();
+      shuffleInstruments();
+      disableClicks();
+      setTimeout(() => {
+          enableClicks();
+          showNextInstrument();
+          startTimer();
+      }, 8500);
+  }
 
-  // Eventos para botones de instrumentos
+  function disableClicks() { clicksEnabled = false; }
+  function enableClicks() { clicksEnabled = true; }
+
+  function shuffleInstruments() {
+      for (let i = instruments.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [instruments[i], instruments[j]] = [instruments[j], instruments[i]];
+      }
+  }
+
+  function showNextInstrument() {
+      if (instruments.length > 0) {
+          currentInstrument = instruments.pop();
+          document.getElementById("instrument-button").onclick = playInstrumentSound;
+      } else {
+          endGame();
+      }
+  }
+
+  function playInstrumentSound() {
+      if (currentInstrumentAudio) currentInstrumentAudio.pause();
+      currentInstrumentAudio = new Audio(currentInstrument.sound);
+      currentInstrumentAudio.play();
+  }
+
+  function startTimer() {
+      updateTimerDisplay(totalTimeInSeconds);
+      timerInterval = setInterval(() => {
+          totalTimeInSeconds--;
+          updateTimerDisplay(totalTimeInSeconds);
+          if (totalTimeInSeconds <= 0 || errors >= 5) {
+              clearInterval(timerInterval);
+              endGame();
+          }
+      }, 1000);
+  }
+
+  function updateTimerDisplay(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const formattedTime = `${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
+      document.getElementById("reloj").textContent = `Tiempo: ${formattedTime}`;
+  }
+
+  function updateErrorsDisplay() {
+      document.getElementById("errores").textContent = `Errores: ${errors}/5`;
+  }
+
+  function checkAnswer(selectedType) {
+      if (!clicksEnabled) return;
+      if (selectedType === currentInstrument.type) {
+          showMessage("CORRECTO","correct");
+          totalTimeInSeconds += 10;
+          correctAnswers++;
+      } else {
+          showMessage("ERROR","error");
+          totalTimeInSeconds -= 15;
+          errors++;
+          updateErrorsDisplay();
+      }
+      showNextInstrument();
+  }
+
+  function endGame() {
+      if (endGameExecuted) return;
+      endGameExecuted = true;
+      clearInterval(timerInterval);
+
+      const currentDate = new Date().toLocaleDateString();
+      const username = localStorage.getItem("ActualUs");
+      const correo = localStorage.getItem("correo");
+      const title = "Reconocer tendencia melódica";
+      const gameCode = "TM_rcnc";
+      const gameNumber = incrementGameNumber();
+
+      if (errors >= 5) score = correctAnswers * 5;
+      else score = correctAnswers * 5 + totalTimeInSeconds * 2;
+
+      const userData = { fecha: currentDate, usuario: username, correo, puntaje: score, juegonumero: gameNumber, title, game: gameCode };
+      const gamesHistory = JSON.parse(localStorage.getItem("gamesHistory")) || [];
+      gamesHistory.push(userData);
+      localStorage.setItem("gamesHistory", JSON.stringify(gamesHistory));
+
+      const firebaseData = { fecha: currentDate, usuario: username, game: gameCode, title, puntaje: score };
+      const newGameKey = database.ref().child('games').push().key;
+      const updates = {};
+      updates['/games/' + newGameKey] = firebaseData;
+      database.ref().update(updates)
+        .then(() => {
+            showMessage('Fin del Juego','fin');
+            setTimeout(() => {
+                showMessage(`Puntaje obtenido: ${score}`,'puntaje');
+                fadeOutBackgroundMusic(6);
+                setTimeout(()=>{ window.location.href="out.html"; },6000);
+            },2500);
+        })
+        .catch((err)=>{ console.error(err); window.location.href="out.html"; });
+  }
+
+  function showMessage(text,type) {
+      clicksEnabled = false;
+      const el = document.getElementById("message");
+      el.textContent = text;
+      el.className = `found-message ${type}`;
+      if(type==='puntaje') el.style.backgroundColor = '#8ec6e6'; else el.style.backgroundColor='';
+      let sound;
+      if(type==='correct') sound = new Audio('Sound/Correcto.mp3');
+      else if(type==='error') sound = new Audio('Sound/Error.mp3');
+      else if(type==='fin') sound = new Audio('Sound/Fin del Juego.mp3');
+      if(sound && type!=='puntaje') sound.play();
+      let duration = (type==='fin')?2500:(type==='puntaje')?6000:1000;
+      if(showMessage.timeoutId) clearTimeout(showMessage.timeoutId);
+      showMessage.timeoutId = setTimeout(()=>{ el.style.display="none"; clicksEnabled=true; },duration);
+      el.style.display="block";
+  }
+
+  function fadeOutBackgroundMusic(duration) {
+      const audio = document.getElementById("background-music");
+      const initialVolume = audio.volume;
+      const interval = setInterval(()=>{
+          audio.volume -= initialVolume/(duration*10);
+          if(audio.volume<=0){ clearInterval(interval); audio.pause(); audio.volume=initialVolume; }
+      },100);
+  }
+
+  function incrementGameNumber() {
+      let num = parseInt(localStorage.getItem("gameNumber"))||0; num++; localStorage.setItem("gameNumber",num); return num;
+  }
+
   const instrumentButtonIds = ["AG","AGGA","AGNR","GA","GAAG","GANR","NR","NRGA","NRAG"];
-  instrumentButtonIds.forEach(id => {
-      document.getElementById(id+"-button").addEventListener("click", () => {
-          if(clicksEnabled) checkAnswer(id);
-      });
+  instrumentButtonIds.forEach(id=>{
+      document.getElementById(id+"-button").addEventListener("click",()=>{ if(clicksEnabled) checkAnswer(id); });
   });
 
-  // Auto-login y mostrar usuario
-  window.addEventListener("load", async () => {
+  window.addEventListener("load", async ()=>{
       const actualUsername = localStorage.getItem("ActualUs");
       document.getElementById("actualUsername").textContent = `Usuario: ${actualUsername}`;
 
+      await autoLogin(); // <-- Auto-login al cargar la página
+
       const bg = document.getElementById("background-music");
       const loopSrc = document.getElementById("loop-music-source");
-      bg.addEventListener("ended", () => {
-          bg.src = loopSrc.src;
-          bg.loop = true;
-          bg.play();
-      });
+      bg.addEventListener("ended",()=>{ bg.src=loopSrc.src; bg.loop=true; bg.play(); });
   });
 
-  // El botón de inicio ya no maneja verificación, solo llama startGame si está habilitado
-  document.getElementById("start-button").addEventListener("click", () => {
-      document.getElementById("start-button-container").style.display = "none";
-      document.querySelector(".container").style.display = "block";
-      startGame();
-  });
+
+
+document.getElementById("start-button").addEventListener("click", function() {
+    // Ya no verificamos la habilitación
+    document.getElementById("start-button-container").style.display = "none";
+    document.querySelector(".container").style.display = "block";
+    startGame();
+});
 </script>
 </body>
 </html>
