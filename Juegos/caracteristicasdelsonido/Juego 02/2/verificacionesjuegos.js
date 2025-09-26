@@ -9,9 +9,12 @@ window.addEventListener("load", async () => {
 
     const juegoCode = "TM_rcnc";
 
-    // 1️⃣ Verificación de login: si no hay usuario logueado en Firebase → mostramos mensaje y detenemos
-    const currentUser = firebase.auth().currentUser;
-    if (!currentUser) {
+    // 1️⃣ Verificación de existencia de login en localStorage
+    const correo = localStorage.getItem('correo');
+    const password = localStorage.getItem('password');
+    const uid = localStorage.getItem('uid');
+
+    if (!correo || !password || !uid) {
         console.log("🚨 Paso 1: DEBES INICIAR SESIÓN");
         setMensajesPendientes(
             "DEBES INICIAR SESIÓN.",
@@ -22,11 +25,23 @@ window.addEventListener("load", async () => {
         return;
     }
 
-    // Usuario logueado
-    const uid = currentUser.uid;
-    const correo = currentUser.email;
+    // 2️⃣ Autenticación real con Firebase
+    try {
+        // Forzar cierre de sesión previo para evitar interferencias de sesiones guardadas en Chrome
+        await firebase.auth().signOut();
+        await firebase.auth().signInWithEmailAndPassword(correo, password);
+    } catch (err) {
+        console.error("Login inválido:", err);
+        setMensajesPendientes(
+            "ACCESO DENEGADO.",
+            "SE TE REDIRIGIRÁ AL INICIO.",
+            "sound/fx/denegado.mp3",
+            "sound/fx/redireccionando.mp3"
+        );
+        return;
+    }
 
-    // 2️⃣ Verificación de habilitación
+    // 3️⃣ Verificación de habilitación
     const habilitado = await verificarHabilitacion(uid, juegoCode);
     if (!habilitado) {
         setMensajesPendientes(
@@ -38,7 +53,7 @@ window.addEventListener("load", async () => {
         return;
     }
 
-    // 3️⃣ Verificación de paso (orden de páginas)
+    // 4️⃣ Verificación de paso (orden de páginas)
     const pasoCorrecto = verificarPaso();
     if (!pasoCorrecto) {
         setMensajesPendientes(
