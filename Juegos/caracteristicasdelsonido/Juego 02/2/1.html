@@ -186,7 +186,7 @@ function startGame() {
     // --- INICIAR MÚSICA DE FONDO AQUÍ ---
     const bg = document.getElementById("background-music");
     const loopSrc = document.getElementById("loop-music-source");
-    bg.src = "Sound/FondoMus1.mp3"; // asegura la primera canción
+    bg.src = "sound/FondoMus1.mp3"; // asegura la primera canción
     bg.loop = false; // loop solo después
     bg.play().catch(e => console.warn("No se pudo reproducir la música:", e));
     bg.onended = () => {
@@ -309,9 +309,9 @@ function startGame() {
       el.className = `found-message ${type}`;
       if(type==='puntaje') el.style.backgroundColor = '#8ec6e6'; else el.style.backgroundColor='';
       let sound;
-      if(type==='correct') sound = new Audio('Sound/Correcto.mp3');
-      else if(type==='error') sound = new Audio('Sound/Error.mp3');
-      else if(type==='fin') sound = new Audio('Sound/Fin del Juego.mp3');
+      if(type==='correct') sound = new Audio('sound/Correcto.mp3');
+      else if(type==='error') sound = new Audio('sound/Error.mp3');
+      else if(type==='fin') sound = new Audio('sound/Fin del Juego.mp3');
       if(sound && type!=='puntaje') sound.play();
       let duration = (type==='fin')?2500:(type==='puntaje')?6000:1000;
       if(showMessage.timeoutId) clearTimeout(showMessage.timeoutId);
@@ -362,6 +362,7 @@ document.getElementById("start-button").addEventListener("click", function() {
 </script>
 </body>
 </html>
+
 
 
 
