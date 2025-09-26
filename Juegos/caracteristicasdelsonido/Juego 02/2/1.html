@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
@@ -172,22 +172,36 @@ table > tr:nth-child(2) > td:first-child { border-right: 0; width: 70%; padding:
   ];
 
   // === Funciones de juego ===
-  function startGame() {
-      endGameExecuted = false;
-      totalTimeInSeconds = 180;
-      errors = 0;
-      correctAnswers = 0;
-      score = 0;
-      document.getElementById("reloj").textContent = "Tiempo: 03:00";
-      updateErrorsDisplay();
-      shuffleInstruments();
-      disableClicks();
-      setTimeout(() => {
-          enableClicks();
-          showNextInstrument();
-          startTimer();
-      }, 8500);
-  }
+function startGame() {
+    endGameExecuted = false;
+    totalTimeInSeconds = 180;
+    errors = 0;
+    correctAnswers = 0;
+    score = 0;
+    document.getElementById("reloj").textContent = "Tiempo: 03:00";
+    updateErrorsDisplay();
+    shuffleInstruments();
+    disableClicks();
+
+    // --- INICIAR MÚSICA DE FONDO AQUÍ ---
+    const bg = document.getElementById("background-music");
+    const loopSrc = document.getElementById("loop-music-source");
+    bg.src = "Sound/FondoMus1.mp3"; // asegura la primera canción
+    bg.loop = false; // loop solo después
+    bg.play().catch(e => console.warn("No se pudo reproducir la música:", e));
+    bg.onended = () => {
+        bg.src = loopSrc.src;
+        bg.loop = true;
+        bg.play().catch(e => console.warn("No se pudo reproducir la música de loop:", e));
+    };
+
+    setTimeout(() => {
+        enableClicks();
+        showNextInstrument();
+        startTimer();
+    }, 8500);
+}
+
 
   function disableClicks() { clicksEnabled = false; }
   function enableClicks() { clicksEnabled = true; }
