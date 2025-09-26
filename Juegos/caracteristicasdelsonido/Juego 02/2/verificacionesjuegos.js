@@ -1,74 +1,57 @@
-﻿let mensajePendiente = null; // Primer mensaje a mostrar
+let mensajePendiente = null; // Primer mensaje a mostrar
 let mensajeSecundario = null; // Segundo mensaje
 let audioPrimero = null;
 let audioSegundo = null;
 
 window.addEventListener("load", async () => {
-    const correo = localStorage.getItem('correo');
-    const password = localStorage.getItem('password');
-    const uid = localStorage.getItem('uid');
-    const juegoCode = "TM_rcnc";
-
     const startButton = document.getElementById("start-button");
     startButton.classList.add("disable-clicks");
 
-    // 1 Verificación de login
-if (!correo || !password || !uid) {
-    console.log("🚨 Paso 1: DEBES INICIAR SESIÓN");
-    setMensajesPendientes(
-        "DEBES INICIAR SESIÓN.",
-        "SE TE REDIRIGIRÁ AL INICIO.",
-        "sound/fx/iniciarsesion.mp3",
-        "sound/fx/redireccionando.mp3"
-    );
-    return;
-}
+    const juegoCode = "TM_rcnc";
 
+    // 1️⃣ Verificación de login: si no hay usuario logueado en Firebase → mostramos mensaje y detenemos
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+        console.log("🚨 Paso 1: DEBES INICIAR SESIÓN");
+        setMensajesPendientes(
+            "DEBES INICIAR SESIÓN.",
+            "SE TE REDIRIGIRÁ AL INICIO.",
+            "sound/fx/iniciarsesion.mp3",
+            "sound/fx/redireccionando.mp3"
+        );
+        return;
+    }
 
-    // 2 Verificación de autenticación con Firebase
-    firebase.auth().onAuthStateChanged(async (user) => {
-        if (!user) {
-            try {
-                await firebase.auth().signInWithEmailAndPassword(correo, password);
-            } catch (err) {
-                console.error(err);
-                setMensajesPendientes(
-                    "ACCESO DENEGADO.",
-                    "SE TE REDIRIGIRÁ AL INICIO.",
-                    "sound/fx/denegado.mp3",
-                    "sound/fx/redireccionando.mp3"
-                );
-                return;
-            }
-        }
+    // Usuario logueado
+    const uid = currentUser.uid;
+    const correo = currentUser.email;
 
-        // 3 Verificación de habilitación
-        const habilitado = await verificarHabilitacion(uid, juegoCode);
-        if (!habilitado) {
-            setMensajesPendientes(
-                "INHABILITADO PARA JUGAR ESTE JUEGO.",
-                "SE TE REDIRIGIRÁ AL INICIO.",
-                "sound/fx/inhabilitado.mp3",
-                "sound/fx/redireccionando.mp3"
-            );
-            return;
-        }
+    // 2️⃣ Verificación de habilitación
+    const habilitado = await verificarHabilitacion(uid, juegoCode);
+    if (!habilitado) {
+        setMensajesPendientes(
+            "INHABILITADO PARA JUGAR ESTE JUEGO.",
+            "SE TE REDIRIGIRÁ AL INICIO.",
+            "sound/fx/inhabilitado.mp3",
+            "sound/fx/redireccionando.mp3"
+        );
+        return;
+    }
 
-        // 4 Verificación de paso (orden de páginas)
-        const pasoCorrecto = verificarPaso();
-        if (!pasoCorrecto) {
-            setMensajesPendientes(
-                "ACCESO DENEGADO.",
-                "SE TE REDIRIGIRÁ AL INICIO.",
-                "sound/fx/denegado.mp3",
-                "sound/fx/redireccionando.mp3"
-            );
-            return;
-        }
+    // 3️⃣ Verificación de paso (orden de páginas)
+    const pasoCorrecto = verificarPaso();
+    if (!pasoCorrecto) {
+        setMensajesPendientes(
+            "ACCESO DENEGADO.",
+            "SE TE REDIRIGIRÁ AL INICIO.",
+            "sound/fx/denegado.mp3",
+            "sound/fx/redireccionando.mp3"
+        );
+        return;
+    }
 
-        //  Todo OK → habilitamos el botón de inicio
-        startButton.classList.remove("disable-clicks");
-    });
+    // ✅ Todo OK → habilitamos el botón de inicio
+    startButton.classList.remove("disable-clicks");
 });
 
 //  Primer clic en cualquier parte para mostrar mensajes pendientes
@@ -136,4 +119,3 @@ function mostrarMensajesSecuenciales(msg1, msg2, audio1, audio2) {
         }, 3000);
     }, 3000);
 }
-
