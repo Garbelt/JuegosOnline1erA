@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BIENVENIDO</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+body { font-family: Arial, sans-serif; text-align: center; background-color: #f9f9f9; }
+.container { width: 350px; margin: auto; background: white; padding: 20px; border-radius: 10px; border: 2px solid #ccc; }
+label { display: block; margin-bottom: 5px; font-weight: bold; text-align: left; }
+input[type="text"] { width: 95%; padding: 8px; font-size: 14px; margin-bottom: 20px; }
+input:focus { outline: none; border: 1px solid #ccc; }
+button { width: 100%; padding: 10px 20px; font-size: 14px; background-color: #337ab7; color: white; border: none; border-radius: 5px; cursor: pointer; }
+button:hover { background-color: #23527c; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>BIENVENIDO</h2>
+    <label for="username">Nombre de Usuario:</label>
+    <input type="text" id="username" placeholder="Escribe tu usuario" required autocomplete="off">
+    <button id="enterButton">ENTRAR</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+
+<!-- 🔒 seguridad.js embebido -->
+<script>
+function generarClave() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+// Se ejecuta al abrir index.html
+function prepararLogin() {
+    const entrarA = generarClave();
+    localStorage.setItem("entrarA", entrarA);
+    localStorage.setItem("entrarB", "NO");
+}
+
+// Se ejecuta al salir de index.html tras login correcto
+function confirmarLogin() {
+    const entrarA = localStorage.getItem("entrarA");
+    if (entrarA) {
+        localStorage.setItem("entrarB", entrarA);
+    }
+}
+
+window.addEventListener("load", prepararLogin);
+</script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyBVZaysx9d6u6P13DYINPtcinpf79Sgx4U",
+    authDomain: "juego001-469b6.firebaseapp.com",
+    databaseURL: "https://juego001-469b6-default-rtdb.firebaseio.com",
+    projectId: "juego001-469b6",
+    storageBucket: "juego001-469b6.appspot.com",
+    messagingSenderId: "528847999661",
+    appId: "1:528847999661:web:6085a104fe64262a042c24"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
+
+async function handleLogin() {
+    const button = document.getElementById('enterButton');
+    const usernameInput = document.getElementById('username');
+    const username = usernameInput.value.trim().toLowerCase();
+    if (!username) { 
+        alert('Por favor, ingresa tu nombre de usuario.'); 
+        return; 
+    }
+
+    button.disabled = true;
+    button.textContent = 'Verificando...';
+
+    try {
+        const userSnap = await database.ref(`usuariosPorNombre/${username}`).get();
+        if (!userSnap.exists()) {
+            alert('❌ Usuario no existe en el sistema.');
+            return;
+        }
+
+        const uid = userSnap.val().uid;
+        const userDataSnap = await database.ref(`usuarios/${uid}`).get();
+        if (!userDataSnap.exists() || userDataSnap.val().activo === false) {
+            alert('❌ Usuario inactivo. No puede ingresar.');
+            return;
+        }
+
+        const foundUser = userDataSnap.val();
+        const correo = foundUser.usuario + "@escuela.com";
+        const tempPassword = "123456";
+        let userCredential;
+
+        try {
+            userCredential = await auth.signInWithEmailAndPassword(correo, tempPassword);
+            let newPassword = "";
+            while (!newPassword || newPassword === tempPassword) {
+                newPassword = prompt("Primer ingreso: crea tu nueva contraseña (no puede ser 123456):");
+                if (!newPassword || newPassword === tempPassword) alert("Contraseña inválida.");
+            }
+            await userCredential.user.updatePassword(newPassword);
+            await database.ref(`adminUsuarios/${uid}/password`).set(newPassword);
+
+            localStorage.setItem('uid', uid);
+            localStorage.setItem('ActualUs', username);
+            localStorage.setItem('correo', correo);
+            localStorage.setItem('password', newPassword);
+            localStorage.setItem('tipoEscuela', foundUser.tipoEscuela || '');
+            localStorage.setItem('nombreApellido', foundUser.nombreApellido || '');
+
+            alert("✅ Contraseña creada correctamente. Bienvenido " + username + "!");
+        } catch {
+            let loggedIn = false;
+            while (!loggedIn) {
+                const inputPassword = prompt("Ingresa tu contraseña:");
+                if (inputPassword === null) break;
+                if (!inputPassword) continue;
+
+                try {
+                    userCredential = await auth.signInWithEmailAndPassword(correo, inputPassword);
+                    loggedIn = true;
+                    await database.ref(`adminUsuarios/${uid}/password`).set(inputPassword);
+
+                    localStorage.setItem('uid', uid);
+                    localStorage.setItem('ActualUs', username);
+                    localStorage.setItem('correo', correo);
+                    localStorage.setItem('password', inputPassword);
+                    localStorage.setItem('tipoEscuela', foundUser.tipoEscuela || '');
+                    localStorage.setItem('nombreApellido', foundUser.nombreApellido || '');
+                } catch {
+                    alert("Contraseña incorrecta. Intenta nuevamente o cancela.");
+                }
+            }
+        }
+
+        if (userCredential && userCredential.user) {
+            // 🔑 confirmamos la salida de index
+            confirmarLogin();
+
+            if (foundUser.curso === "DOCENTE") {
+                window.location.href = "Espacio_Docente/Habilitaciones.html";
+            } else {
+                window.location.href = "Menu/Juegos.html";
+            }
+        }
+
+    } catch (error) {
+        alert('Error al ingresar: ' + error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = 'ENTRAR';
+    }
+}
+
+document.getElementById('enterButton').addEventListener('click', handleLogin);
+document.getElementById('username').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') { event.preventDefault(); handleLogin(); }
+});
+document.getElementById('username').focus();
+</script>
+</body>
+</html>
