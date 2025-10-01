@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HISTORIAL DE JUEGOS</title>
+  <style>
+    body { font-family: Arial, sans-serif; min-height: 100vh; margin: 0; display: flex; flex-direction: column; align-items: center; background: #fff; }
+    .container, .recent-container { border: 2px solid #ccc; border-radius: 10px; padding: 20px; width: 50%; margin-top: 20px; background-color: #f9f9f9; overflow-x: auto; display: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 8px; border: 1px solid #ddd; text-align: center; word-break: break-word; }
+    th { background-color: #f2f2f2; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    .title-line1 { font-size: 24px; margin: 0; }
+    .title-line2 { font-size: 14px; margin: 5px 0 0 0; font-weight: normal; color: #555; }
+    .highlight { font-weight: bold; color: red; }
+    .button-container { margin-top: 20px; display: none; justify-content: center; gap: 20px; width: 100%; }
+    .button { width: 250px; max-width: 90%; padding: 10px 20px; font-size: 16px; border: none; cursor: pointer; border-radius: 5px; text-align: center; background-color: #004080; color: white; transition: background-color 0.3s ease; }
+    .button:hover { background-color: #002f5d; }
+    .message.inhabilitado { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #ffcc00; color: #000; padding: 20px; border: 2px solid #333; border-radius: 10px; font-size: 20px; text-transform: uppercase; z-index: 9999; text-align: center; width: 80%; max-width: 300px; display: none; }
+    .disable-clicks { pointer-events: none; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <center>
+    <h1 class="title-line1">HISTORIAL DE JUEGOS</h1>
+    <h2 class="title-line2">IDENTIFICAR Y COMPARAR PARES DE SONIDOS</h2>
+  </center>
+  <table id="games-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fecha</th>
+        <th>Usuario</th>
+        <th>Puntaje</th>
+      </tr>
+    </thead>
+    <tbody id="games-history"><tr><td colspan="4">Cargando historial...</td></tr></tbody>
+  </table>
+</div>
+
+<div id="recent-container" class="recent-container">
+  <center><h2 class="title-line2">TU PUNTAJE</h2></center>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Fecha</th><th>Usuario</th><th>Puntaje</th></tr>
+    </thead>
+    <tbody id="recent-game-history"></tbody>
+  </table>
+</div>
+
+<div class="button-container" id="buttonContainer">
+  <button id="backButton" class="button">A LOS JUEGOS SOBRE "CARACTERÍSTICAS DEL SONIDO"</button>
+</div>
+
+<div id="message" class="message inhabilitado"></div>
+
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+
+<script>
+let mensajePendiente = null;
+let mensajeSecundario = null;
+let audioPrimero = null;
+let audioSegundo = null;
+
+const usuarioActual = localStorage.getItem('ActualUs') || '';
+let usuariosPorUid = {};
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBVZaysx9d6u6P13DYINPtcinpf79Sgx4U",
+  authDomain: "juego001-469b6.firebaseapp.com",
+  databaseURL: "https://juego001-469b6-default-rtdb.firebaseio.com",
+  projectId: "juego001-469b6",
+  storageBucket: "juego001-469b6.appspot.com",
+  messagingSenderId: "528847999661",
+  appId: "1:528847999661:web:6085a104fe64262a042c24"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+function setMensajesPendientes(msg1, msg2, aud1, aud2) {
+  mensajePendiente = msg1;
+  mensajeSecundario = msg2;
+  audioPrimero = aud1;
+  audioSegundo = aud2;
+}
+
+function mostrarMensajesSecuenciales(msg1, msg2, audio1, audio2, callback) {
+  const messageEl = document.getElementById("message");
+  messageEl.style.display = "block";
+  messageEl.textContent = msg1;
+  document.body.classList.add("disable-clicks");
+
+  const a1 = new Audio(audio1);
+  a1.play().catch(() => {});
+  a1.onended = () => {
+    messageEl.textContent = msg2;
+    const a2 = new Audio(audio2);
+    a2.play().catch(() => {});
+    a2.onended = () => { if (callback) callback(); };
+  };
+}
+
+async function cargarUsuarios() {
+  const snap = await database.ref('usuarios').once('value');
+  usuariosPorUid = snap.val() || {};
+}
+
+async function obtenerJuegos() {
+  const snap = await database.ref('games').once('value');
+  return snap.val() ? Object.values(snap.val()) : [];
+}
+
+function filtrarJuegos(juegos) {
+  const usuarioData = Object.values(usuariosPorUid).find(u => u.usuario === usuarioActual);
+  if (!usuarioData) return [];
+  const permiso = usuarioData.permiso || 'propio';
+  const rol = usuarioData.rol || 'alumno';
+  const escuela = usuarioData.tipoEscuela || '';
+  const curso = usuarioData.curso || '';
+
+  return juegos.filter(j => {
+    const usuarioJuego = j.usuario;
+    const usuarioJ = Object.values(usuariosPorUid).find(u => u.usuario === usuarioJuego);
+    if (!usuarioJ) return false;
+    if (rol === 'docente') return usuarioJ.rol === 'alumno' && usuarioJ.tipoEscuela === escuela;
+    if (permiso === 'propio') return usuarioJuego === usuarioActual;
+    if (permiso === 'curso') return (usuarioJuego === usuarioActual) || 
+      (usuarioJ.tipoEscuela === escuela && usuarioJ.curso === curso && !usuarioJ.oculto);
+    if (permiso === 'escuela') return (usuarioJuego === usuarioActual) || 
+      (usuarioJ.tipoEscuela === escuela && !usuarioJ.oculto);
+    return usuarioJuego === usuarioActual;
+  });
+}
+
+function mostrarHistorial(juegos) {
+  const tbody = document.getElementById('games-history');
+  const recentTbody = document.getElementById('recent-game-history');
+  const container = document.querySelector('.container');
+  const recentContainer = document.getElementById('recent-container');
+  const buttonContainer = document.getElementById('buttonContainer');
+
+  container.style.display = 'block';
+  const juegosDPS = juegos.filter(j => j.game === 'FOLK_sdl');
+  if (!juegosDPS.length) {
+    tbody.innerHTML = "<tr><td colspan='4'>No hay historial disponible.</td></tr>";
+  } else {
+    const ranking = [...juegosDPS].sort((a,b) => b.puntaje - a.puntaje);
+    const top5 = ranking.slice(0,5);
+    tbody.innerHTML = top5.map((j,idx) =>
+      `<tr><td>${idx+1}</td><td>${j.fecha}</td><td>${j.usuario}</td><td>${j.puntaje}</td></tr>`
+    ).join('');
+  }
+
+  const gamesHistoryLocal = JSON.parse(localStorage.getItem("gamesHistory")) || [];
+  const juegosUsuarioLocal = gamesHistoryLocal.filter(g => g.usuario === usuarioActual && g.game === 'FOLK_sdl');
+
+  if (juegosUsuarioLocal.length) {
+    const ultimoJuego = juegosUsuarioLocal.sort((a,b) => b.juegonumero - a.juegonumero)[0];
+    const ranking = juegosDPS.sort((a,b) => b.puntaje - a.puntaje);
+    let puesto = ranking.findIndex(j =>
+      j.usuario === ultimoJuego.usuario &&
+      j.fecha === ultimoJuego.fecha &&
+      j.puntaje === ultimoJuego.puntaje
+    ) + 1;
+    if (puesto === 0) puesto = '-';
+
+    recentTbody.innerHTML = `
+      <tr class="highlight">
+        <td>${puesto}</td>
+        <td>${ultimoJuego.fecha}</td>
+        <td>${ultimoJuego.usuario}</td>
+        <td>${ultimoJuego.puntaje}</td>
+      </tr>
+    `;
+    recentContainer.style.display = 'block';
+  } else {
+    recentContainer.style.display = 'none';
+  }
+
+  buttonContainer.style.display = 'flex';
+}
+
+// ===== Verificación de paso =====
+function verificarPaso() {
+  const pathSegments = window.location.pathname.split("/").filter(seg => seg !== "");
+  const penultimoSegmento = pathSegments[pathSegments.length - 2];
+  const carpetaNumero = parseInt(penultimoSegmento) || 0;
+  const passActual = parseInt(localStorage.getItem("pass")) || 0;
+  return passActual === carpetaNumero;
+}
+
+// ===== Verificación de habilitación por juego =====
+async function verificarHabilitacion(uid, juegoCode) {
+  try {
+    const snapshot = await firebase.database().ref(`listadejuegos/${juegoCode}/alumnosHabilitados/${uid}`).once("value");
+    return snapshot.exists() && snapshot.val() === true;
+  } catch(e) {
+    console.error("Error verif. habilitación:", e);
+    return false;
+  }
+}
+
+// ===== Cargar todo: login + paso + habilitación =====
+async function cargarTodo() {
+  const juegoCode = "FOLK_sdl";
+
+  firebase.auth().onAuthStateChanged(async (user) => {
+    // 1️⃣ Login
+    if (!user) {
+      setMensajesPendientes(
+        "DEBES INICIAR SESIÓN.",
+        "SE TE REDIRIGIRÁ AL INICIO.",
+        "sound/fx/iniciarsesion.mp3",
+        "sound/fx/redireccionando.mp3"
+      );
+      return;
+    }
+
+    const correoLS = localStorage.getItem("correo") || "";
+    const uidLS = localStorage.getItem("uid") || "";
+
+    if (!correoLS || !uidLS || correoLS !== user.email || uidLS !== user.uid) {
+      setMensajesPendientes(
+        "DEBES INICIAR SESIÓN.",
+        "SE TE REDIRIGIRÁ AL INICIO.",
+        "sound/fx/iniciarsesion.mp3",
+        "sound/fx/redireccionando.mp3"
+      );
+      await firebase.auth().signOut();
+      return;
+    }
+
+    // 2️⃣ Paso
+    const pasoCorrecto = verificarPaso();
+    if (!pasoCorrecto) {
+      setMensajesPendientes(
+        "ACCESO DENEGADO.",
+        "SE TE REDIRIGIRÁ AL INICIO.",
+        "sound/fx/denegado.mp3",
+        "sound/fx/redireccionando.mp3"
+      );
+      return;
+    }
+
+    // 3️⃣ Habilitación para juego
+    const habilitado = await verificarHabilitacion(user.uid, juegoCode);
+    if (!habilitado) {
+      setMensajesPendientes(
+        "INHABILITADO PARA JUGAR ESTE JUEGO.",
+        "SE TE REDIRIGIRÁ AL INICIO.",
+        "sound/fx/inhabilitado.mp3",
+        "sound/fx/redireccionando.mp3"
+      );
+      return;
+    }
+
+    // 4️⃣ Todo OK → cargar historial
+    await cargarUsuarios();
+    const juegos = await obtenerJuegos();
+    const juegosFiltrados = filtrarJuegos(juegos);
+    mostrarHistorial(juegosFiltrados);
+  });
+}
+
+// ===== Primer clic para mostrar mensajes =====
+window.addEventListener("click", () => {
+  if (mensajePendiente && mensajeSecundario) {
+    mostrarMensajesSecuenciales(mensajePendiente, mensajeSecundario, audioPrimero, audioSegundo, () => {
+      window.location.href = "../../../../index.html";
+    });
+    mensajePendiente = null;
+    mensajeSecundario = null;
+  }
+});
+
+// ===== Botón continuar =====
+document.getElementById('backButton').addEventListener('click', () => {
+  const valorAleatorio = Math.floor(Math.random() * 9000) + 1000;
+  localStorage.setItem('entrarA', valorAleatorio);
+  localStorage.setItem('entrarB', localStorage.getItem('entrarA'));
+  window.location.href = "../../catalogo.html";
+});
+
+// ===== Inicialización =====
+window.addEventListener("load", () => { cargarTodo(); });
+
+</script>
+</body>
+</html>
