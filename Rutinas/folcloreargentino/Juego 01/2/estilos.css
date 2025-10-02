@@ -1,0 +1,86 @@
+﻿    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .container {
+        display: none; /* Ocultar la sopa de letras al inicio */
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        border: 2px solid #333;
+        align-items: center;
+    }
+
+    #start-button-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+    #start-button {
+        padding: 10px 20px;
+        font-size: clamp(12px, 2vw, 18px);
+        cursor: pointer;
+        border: 1px solid #444;
+        background-color: #f0f0f0;
+        border-radius: 6px;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+    #start-button:hover:not(:disabled) {
+        background-color: #ddd;
+        transform: scale(1.05);
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        aspect-ratio: 7 / 4;
+    }
+    th, td {
+        border: 1px solid black;
+    }
+    #align-left-top {
+        text-align: left; /* Alineación horizontal izquierda */
+        vertical-align: top; /* Alineación arriba */
+    }
+    #align-center-center {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .title-cell {
+        height: 10%; /* o el porcentaje que necesites */
+        background-color: #f2f2f2;
+    }
+    .titulo-principal {
+        font-size: clamp(18px, 5vw, 32px);
+        font-weight: bold;
+    }
+    .titulo-secundario {
+        font-size: clamp(14px, 3.5vw, 22px);
+        font-weight: normal;
+    }
+    .celda-panel {
+        background-color: #d0ecf9;   /* Celeste claro */
+        padding: 10px;
+        width: 25%;
+        border-radius: 10px;
+        font-size: clamp(14px, 3.5vw, 20px); /* Tamaño de texto adaptable */
+        font-family: Arial, sans-serif;
+        color: #000;
+        line-height: 1.4;
+        box-sizing: border-box;
+    }
+
+    #panel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .disable-clicks {
+        pointer-events: none;
+    }

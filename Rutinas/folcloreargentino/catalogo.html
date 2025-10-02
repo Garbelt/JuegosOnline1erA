@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo de Juegos</title>
+
+<style>
+/* ===== Estilos generales ===== */
+body, html {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+}
+
+.container {
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  width: 95%;
+  max-width: 900px;
+  background: white;
+  box-sizing: border-box;
+  min-height: 300px;
+}
+
+/* ===== Cinta de juegos horizontal ===== */
+.table-wrapper-horizontal {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.scroll-container {
+  overflow-x: hidden;
+  flex: 1;
+}
+
+.table-flex {
+  display: flex;
+  flex-wrap: nowrap;
+  transition: transform 0.3s ease;
+}
+
+.cell {
+  flex: 0 0 calc((100% - 80px)/3); /* 3 celdas visibles considerando botones */
+  margin: 0 5px;
+  text-align: center;
+}
+
+.cell img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.cell a {
+  display: block;
+  margin-top: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #2980b9;
+}
+
+.scroll-btn {
+  width: 40px;
+  height: 80px;
+  font-size: 24px;
+  font-weight: bold;
+  border: none;
+  background-color: #ddd;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.scroll-btn:hover {
+  background-color: #bbb;
+}
+
+/* ===== Botones de navegación ===== */
+#backButton, #homeButton {
+  width: 85%;
+  max-width: 450px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  display: block;
+  margin: 15px auto;
+}
+
+#backButton { background-color: #2980b9; color: white; }
+#backButton:hover { background-color: #1c5ea8; }
+
+#homeButton { background-color: #ddd; color: black; }
+#homeButton:hover { background-color: #bbb; }
+
+/* ===== Mensaje de acceso denegado ===== */
+.message.inhabilitado {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffcc00;
+    color: #000;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    font-size: 20px;
+    text-transform: uppercase;
+    z-index: 9999;
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+    display: none;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .cell { flex: 0 0 calc((100% - 60px)/3); }
+  .scroll-btn { width: 30px; height: 60px; font-size: 20px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Catálogo de Juegos - Características del Sonido</h2>
+
+    <!-- ===== Cinta horizontal de juegos ===== -->
+    <div class="table-wrapper-horizontal">
+        <button class="scroll-btn left" onclick="scrollTable(-1)">&lt;</button>
+
+        <div class="scroll-container">
+            <div class="table-flex" id="tableFlex">
+                <div class="cell">
+                    <img src="Imagenes/juego01.jpg" alt="Juego 01">
+                    <a href="Juego 01/gral/gral.html" onclick="setRutina('Juego 01')">Juego 01</a>
+                </div>
+                <div class="cell">
+                    <img src="Imagenes/juego02.jpg" alt="Juego 02">
+                    <a href="Juego 02/gral/gral.html" onclick="setRutina('Juego 02')">Juego 02</a>
+                </div>
+                <div class="cell">
+                    <img src="Imagenes/juego03.jpg" alt="Juego 03">
+                    <a href="Juego 03/gral/gral.html" onclick="setRutina('Juego 03')">Juego 03</a>
+                </div>
+                <div class="cell">
+                    <img src="Imagenes/juego04.jpg" alt="Juego 04">
+                    <a href="Juego 04/gral/gral.html" onclick="setRutina('Juego 04')">Juego 04</a>
+                </div>
+                <div class="cell">
+                    <img src="Imagenes/juego05.jpg" alt="Juego 05">
+                    <a href="Juego 05/gral/gral.html" onclick="setRutina('Juego 05')">Juego 05</a>
+                </div>
+            </div>
+        </div>
+
+        <button class="scroll-btn right" onclick="scrollTable(1)">&gt;</button>
+    </div>
+
+    <!-- ===== Botones de navegación ===== -->
+    <button id="backButton" onclick="goBackToGames()">Volver al Menú Anterior</button>
+    <button id="homeButton" onclick="goToHome()">Volver al Inicio</button>
+</div>
+
+<!-- ===== Mensaje de acceso denegado ===== -->
+<div id="message" class="message inhabilitado"></div>
+
+<script>
+// ===== Variables de control y mensajes =====
+let mensajePendiente = null;
+let mensajeSecundario = null;
+let audioPrimero = null;
+let audioSegundo = null;
+
+// ===== Inicialización de entrarA / entrarB =====
+if (!localStorage.getItem("entrarA")) localStorage.setItem("entrarA", Math.floor(1000 + Math.random() * 9000));
+if (!localStorage.getItem("entrarB")) localStorage.setItem("entrarB", "NO");
+
+let entrarA = localStorage.getItem("entrarA");
+let entrarB = localStorage.getItem("entrarB");
+
+// ===== Verificación de acceso =====
+if (entrarA !== entrarB) {
+    document.querySelector(".container").style.display = "none";
+
+    setMensajesPendientes(
+        "ACCESO DENEGADO.",
+        "SE TE REDIRIGIRÁ AL INICIO.",
+        "sound/fx/denegado.mp3",
+        "sound/fx/redireccionando.mp3"
+    );
+} else {
+    // Acceso permitido, reiniciamos entrarB a "NO" temporalmente
+    localStorage.setItem("entrarB", "NO");
+}
+
+// ===== Función para preparar la próxima página =====
+function prepararProximaPagina() {
+    const nuevoA = Math.floor(1000 + Math.random() * 9000);
+    localStorage.setItem("entrarA", nuevoA);
+    localStorage.setItem("entrarB", nuevoA);
+}
+
+// ===== Función para asignar rutina al hacer clic en un juego =====
+function setRutina(gameName) {
+
+    localStorage.setItem("acumulado", 0);
+    localStorage.setItem("pass", 0);
+    localStorage.setItem("esrutina", "si");
+    localStorage.setItem("esjuego", "no");
+
+    console.log(`Se ha inicializado el acumulado: 0`);
+    prepararProximaPagina();
+}
+
+// ===== Funciones de navegación =====
+function goBackToGames() { 
+    prepararProximaPagina();
+    window.location.href = '../../Menu/musica.html'; 
+}
+
+function goToHome() { 
+    prepararProximaPagina();
+    window.location.href = '../../index.html'; 
+}
+
+// ===== Funciones de mensajes y audios =====
+function setMensajesPendientes(msg1, msg2, aud1, aud2) {
+    mensajePendiente = msg1;
+    mensajeSecundario = msg2;
+    audioPrimero = aud1;
+    audioSegundo = aud2;
+}
+
+function mostrarMensajesSecuenciales(msg1, msg2, audio1, audio2) {
+    const messageEl = document.getElementById("message");
+    messageEl.textContent = msg1;
+    messageEl.style.display = "block";
+
+    const a1 = new Audio(audio1);
+    a1.play().catch(e => console.warn("Error primer audio:", e));
+
+    a1.onended = () => {
+        messageEl.textContent = msg2;
+        const a2 = new Audio(audio2);
+        a2.play().catch(e => console.warn("Error segundo audio:", e));
+
+        a2.onended = () => {
+            window.location.href = '../../index.html';
+        };
+    };
+}
+
+// ===== Primer clic para disparar mensajes =====
+window.addEventListener("click", () => {
+    if (mensajePendiente && mensajeSecundario) {
+        mostrarMensajesSecuenciales(mensajePendiente, mensajeSecundario, audioPrimero, audioSegundo);
+        mensajePendiente = null;
+        mensajeSecundario = null;
+    }
+});
+
+// ===== Función para scroll horizontal =====
+let scrollIndex = 0;
+function scrollTable(direction) {
+    const container = document.querySelector(".scroll-container");
+    const cells = document.querySelectorAll(".table-flex .cell");
+    scrollIndex += direction;
+    if (scrollIndex < 0) scrollIndex = 0;
+    if (scrollIndex > cells.length - 3) scrollIndex = cells.length - 3; // 3 visibles
+    const cellWidth = cells[0].offsetWidth + 10; // margen
+    container.scrollTo({ left: scrollIndex * cellWidth, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

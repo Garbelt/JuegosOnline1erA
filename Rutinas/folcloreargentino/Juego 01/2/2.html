@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clasificación de Instrumentos</title>
+<link rel="stylesheet" href="mensajesdiferente.css">
+<link rel="stylesheet" href="botoneria.css">
+<link rel="stylesheet" href="estilos.css">
+<style>
+    #instrument {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .modal { display: none; }
+
+    .modal-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #8ec6e6;
+        color: black;
+        padding: 20px;
+        border: 2px solid #333;
+        font-size: 24px;
+        z-index: 9999;
+        text-align: center;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .instrument-image {
+        max-width: 250px;
+        max-height: 250px;
+        display: block;
+        margin: 0 auto;
+        border: 1px solid #333;
+    }
+</style>
+</head>
+<body>
+<div id="start-button-container">
+    <button id="start-button" class="disable-clicks">COMENZAR EL JUEGO</button>
+</div>
+
+<div class="container" style="display:none;">
+    <table>
+        <tr>
+            <th colspan="2" class="title-cell" style="text-align: center;">
+                <span class="titulo-principal">HOY IDENTIFICAMOS...</span><br>
+                <span class="titulo-secundario">TRADICIONES ARGENTINAS</span>
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <center><div id="instrument"></div></center>
+                <center>
+                    <div>
+                        <button id="tradicional-button" class="btn-corregir">TRADICIONAL</button>
+                        <button id="extraño-button" class="btn-corregir">EXTRAÑO</button>
+                    </div>
+                </center>
+            </td>
+            <td id="align-left-top" class="celda-panel">
+                <div id="panel">
+                    <div>
+                        <div id="actualUsername"></div>
+                        <br>
+                        <div id="puntaje">Puntaje: 0</div>
+                        <div id="reloj">Tiempo: 01:00</div>
+                        <div id="errores">Errores: 0/5</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="found-message" id="message"></div>
+
+<audio id="background-music" loop>
+    <source src="sound/FondoMus.mp3" type="audio/mpeg">
+    Tu navegador no soporta la reproducción de audio.
+</audio>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBVZaysx9d6u6P13DYINPtcinpf79Sgx4U",
+        authDomain: "juego001-469b6.firebaseapp.com",
+        databaseURL: "https://juego001-469b6-default-rtdb.firebaseio.com",
+        projectId: "juego001-469b6",
+        storageBucket: "juego001-469b6.appspot.com",
+        messagingSenderId: "528847999661",
+        appId: "1:528847999661:web:6085a104fe64262a042c24"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
+
+<!-- Scripts -->
+<script src="verificacionesjuegos.js"></script>
+<script src="script.js"></script>
+
+<script>
+window.addEventListener("load", () => {
+    // Mostrar usuario si existe en localStorage
+    const actualUsername = localStorage.getItem("ActualUs");
+    if (actualUsername) {
+        document.getElementById("actualUsername").textContent = `Usuario: ${actualUsername}`;
+    }
+});
+
+document.getElementById("start-button").addEventListener("click", function() {
+    if (this.classList.contains("disable-clicks")) return;
+
+    document.getElementById("start-button-container").style.display = "none";
+    document.querySelector(".container").style.display = "block";
+
+    document.getElementById("background-music").play();
+    startGame();
+});
+</script>
+</body>
+</html>
