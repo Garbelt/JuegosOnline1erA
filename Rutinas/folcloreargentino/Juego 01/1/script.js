@@ -175,7 +175,7 @@ function showGameMessage(text, duration = 3000, audioSrc = null, callback = null
 
 // Mostrar "PALABRA ENCONTRADA"
 function showFoundMessage() {
-    showGameMessage("PALABRA ENCONTRADA", 3000, "sound/palabraencontrada.mp3", () => {
+    showGameMessage("PALABRA ENCONTRADA", 3000, "sound/PalabraEncontrada.mp3", () => {
         score += 30;
         document.getElementById("puntaje").textContent = `Puntaje: ${score}`;
         checkForBonus();
@@ -371,3 +371,4 @@ document.addEventListener("click", function(event) {
 });
 
 fillEmptyCells();
+
